@@ -1,0 +1,16 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme using Material 3 -->
+    <style name="Base.Theme.FinalProject" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">#187BCE</item>
+        <item name="colorSecondary">#535F70</item>
+        <item name="android:statusBarColor">#187BCE</item>
+    </style>
+
+    <style name="Theme.FinalProject" parent="Base.Theme.FinalProject" />
+
+    <!-- Unified AppTheme for all activities to prevent crash -->
+    <style name="AppTheme" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">#187BCE</item>
+        <item name="colorSecondary">#535F70</item>
+    </style>
+</resources>

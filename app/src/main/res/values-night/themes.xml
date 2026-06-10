@@ -1,0 +1,8 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat">
+        <item name="colorPrimary">#187BCE</item>
+        <item name="colorPrimaryDark">#187BCE</item>
+        <item name="colorAccent">#187BCE</item>
+    </style>
+</resources>
