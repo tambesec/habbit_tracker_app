@@ -29,7 +29,7 @@ public class Setting extends AppCompatActivity {
     private Account getAccount = new Account();
 
     TextView txtName, txtGender, txtBorn, txtPhone, txtGmail;
-    ImageButton imgBtnClcok, imgBtnMusic, imgBtnGraph, imgBtnHome;
+    ImageButton imgBtnClcok, imgBtnGraph, imgBtnHome;
     Button btnEdit;
     MaterialButton btnLogout;
     ImageView imageView;
@@ -55,8 +55,12 @@ public class Setting extends AppCompatActivity {
         imgBtnGraph = findViewById(R.id.ib_graph);
         imgBtnClcok = findViewById(R.id.ib_clock);
         imgBtnHome = findViewById(R.id.ib_home);
-        imgBtnMusic = findViewById(R.id.ib_music);
         toolbar = findViewById(R.id.toolbar);
+
+        // Xử lý nút Back trên Toolbar
+        if (toolbar != null) {
+            toolbar.setNavigationOnClickListener(v -> finish());
+        }
 
         imgBtnGraph.setOnClickListener(v -> {
             Intent intent = new Intent(Setting.this, Progress_total.class);
@@ -82,14 +86,6 @@ public class Setting extends AppCompatActivity {
             intent.putExtras(bundle);
             startActivity(intent);
         });
-        imgBtnMusic.setOnClickListener(v -> {
-            Intent intent = new Intent(Setting.this, SongsActivity.class);
-            Bundle bundle = new Bundle();
-            bundle.putSerializable("user_account", getAccount);
-            intent.putExtra("idTaiKhoan", idTaiKhoan);
-            intent.putExtras(bundle);
-            startActivity(intent);
-        });
 
         btnEdit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -107,7 +103,6 @@ public class Setting extends AppCompatActivity {
     }
 
     private void logout() {
-        // Xóa thông tin đăng nhập đã lưu trong SharedPreferences
         SharedPreferences prefs = getSharedPreferences("login_prefs", MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.remove("remember_username");
@@ -115,7 +110,6 @@ public class Setting extends AppCompatActivity {
         editor.remove("remember_time");
         editor.apply();
 
-        // Chuyển về màn hình Welcome (đăng nhập)
         Intent intent = new Intent(Setting.this, WelcomeActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);

@@ -160,20 +160,8 @@
                 android:padding="12dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/home_graph"
-                app:layout_constraintEnd_toStartOf="@+id/ib_music"
-                app:layout_constraintStart_toEndOf="@+id/ib_home"
-                app:tint="#495057" />
-
-            <ImageButton
-                android:id="@+id/ib_music"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:padding="12dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/home_music"
                 app:layout_constraintEnd_toStartOf="@+id/ib_clock"
-                app:layout_constraintStart_toEndOf="@+id/ib_graph"
+                app:layout_constraintStart_toEndOf="@+id/ib_home"
                 app:tint="#495057" />
 
             <ImageButton
@@ -185,7 +173,7 @@
                 android:scaleType="fitCenter"
                 android:src="@drawable/home_clock"
                 app:layout_constraintEnd_toStartOf="@+id/ib_settings"
-                app:layout_constraintStart_toEndOf="@+id/ib_music"
+                app:layout_constraintStart_toEndOf="@+id/ib_graph"
                 app:tint="#187BCE" />
 
             <ImageButton

@@ -5,13 +5,27 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF"
+    android:padding="0dp"
     tools:context=".activities.ForgotActivity">
 
+    <!-- Mảng màu xanh nền phía trên: Đảm bảo sát đỉnh parent -->
+
+    <!-- Hình sóng: Đưa lên trên cùng, phủ lên viewHeader hoặc căn chỉnh sát mép -->
     <View
         android:id="@+id/viewHeader"
         android:layout_width="match_parent"
         android:layout_height="180dp"
         android:background="#E7F3FF"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="0dp" />
+
+    <ImageView
+        android:id="@+id/imageViewBackground"
+        android:layout_width="412dp"
+        android:layout_height="177dp"
+        android:adjustViewBounds="true"
+        android:scaleType="fitXY"
+        android:src="@drawable/wel_screen"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
@@ -28,22 +42,12 @@
         app:layout_constraintTop_toTopOf="parent"
         app:tint="#187BCE" />
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginTop="40dp"
-        android:src="@drawable/wel_screen"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <TextView
         android:id="@+id/tvWelcomeTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        android:text="Recover Password"
+        android:text="Khôi phục mật khẩu"
         android:textColor="#187BCE"
         android:textSize="28sp"
         android:textStyle="bold"
@@ -69,7 +73,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
-                android:text="Enter your details to receive your password via email."
+                android:text="Nhập thông tin chi tiết để nhận lại mật khẩu qua email."
                 android:textColor="#6c757d"
                 android:textSize="14sp" />
 
@@ -77,7 +81,7 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Username"
+                android:hint="Tên người dùng"
                 app:boxCornerRadiusBottomEnd="12dp"
                 app:boxCornerRadiusBottomStart="12dp"
                 app:boxCornerRadiusTopEnd="12dp"
@@ -96,7 +100,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:hint="Email Address"
+                android:hint="Địa chỉ Email"
                 app:boxCornerRadiusBottomEnd="12dp"
                 app:boxCornerRadiusBottomStart="12dp"
                 app:boxCornerRadiusTopEnd="12dp"
@@ -115,21 +119,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:layout_marginTop="24dp"
-                android:text="Get Password"
+                android:text="Lấy mật khẩu"
                 android:textAllCaps="false"
                 android:textSize="18sp"
                 app:cornerRadius="12dp" />
 
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
-
-    <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:alpha="0.5"
-        android:scaleType="fitCenter"
-        android:src="@drawable/wel_screen2"
-        app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

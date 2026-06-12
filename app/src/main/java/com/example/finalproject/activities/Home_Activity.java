@@ -11,9 +11,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -28,13 +26,10 @@ import com.example.finalproject.model.ListviewHomeTest;
 import com.example.finalproject.model.MyBroadcastReceiver;
 import com.example.finalproject.ui.LisviewHomeTestAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.harrywhewell.scrolldatepicker.DayScrollDatePicker;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -44,14 +39,13 @@ import java.util.List;
 public class Home_Activity extends AppCompatActivity {
     private HabitDatabaseHelper databaseHelper;
     private Account acc = new Account();
-    private DayScrollDatePicker mPicker;
-    private TextView currentDay;
     private String idUser;
+    private String selectedDate;
     ListView listHome;
     ArrayList<ListviewHomeTest> arrayListHome;
     LisviewHomeTestAdapter adapterHome;
-    FloatingActionButton btnNew; // Đã sửa: Phải là FloatingActionButton
-    ImageButton ibGraph, ibMusic, ibClock, ibSettings;
+    FloatingActionButton btnNew; 
+    ImageButton ibGraph, ibClock, ibSettings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,38 +54,28 @@ public class Home_Activity extends AppCompatActivity {
 
         databaseHelper = HabitDatabaseHelper.getInstance(this);
 
-        // Nhận dữ liệu an toàn
         Bundle b = getIntent().getExtras();
         if (b != null && b.getSerializable("user_account") != null) {
             acc = (Account) b.getSerializable("user_account");
         }
         
         idUser = getIntent().getStringExtra("idTaiKhoan");
-        if (idUser == null && acc != null) {
+        if (idUser == null && acc != null && acc.getUsername() != null) {
             idUser = databaseHelper.getAccountIdByUsernameAndPassword(acc.getUsername(), acc.getPassword());
         }
 
-        currentDay = findViewById(R.id.txtCurrentDay);
+        TextView currentDay = findViewById(R.id.txtCurrentDay);
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
+        selectedDate = sdf.format(new Date());
+        
         if (currentDay != null) {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-            currentDay.setText(LocalDateTime.now().format(formatter));
-        }
-
-        mPicker = findViewById(R.id.day_date_picker);
-        if (mPicker != null) {
-            mPicker.setStartDate(1, 1, 2024);
-            mPicker.setEndDate(31, 12, 2025);
+            currentDay.setText("Hôm nay: " + selectedDate);
         }
 
         listHome = findViewById(R.id.lvHome);
         arrayListHome = new ArrayList<>();
         adapterHome = new LisviewHomeTestAdapter(arrayListHome, this, R.layout.list_item_home, idUser);
         listHome.setAdapter(adapterHome);
-
-        listHome.setOnItemClickListener((parent, view, position, id) -> {
-            ListviewHomeTest item = arrayListHome.get(position);
-            showHabitOptions(item);
-        });
 
         btnNew = findViewById(R.id.btnNew); 
         btnNew.setOnClickListener(v -> {
@@ -110,6 +94,9 @@ public class Home_Activity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        if (idUser == null && acc != null && acc.getUsername() != null) {
+            idUser = databaseHelper.getAccountIdByUsernameAndPassword(acc.getUsername(), acc.getPassword());
+        }
         if (idUser != null) {
             getListHabit();
             getReminder();
@@ -118,14 +105,12 @@ public class Home_Activity extends AppCompatActivity {
 
     private void setupBottomNav() {
         ibGraph = findViewById(R.id.ib_graph);
-        ibMusic = findViewById(R.id.ib_music);
         ibClock = findViewById(R.id.ib_clock);
         ibSettings = findViewById(R.id.ib_settings);
 
         View.OnClickListener navListener = v -> {
             Class<?> target = null;
             if (v.getId() == R.id.ib_graph) target = Progress_total.class;
-            else if (v.getId() == R.id.ib_music) target = SongsActivity.class;
             else if (v.getId() == R.id.ib_clock) target = Pomorodo.class;
             else if (v.getId() == R.id.ib_settings) target = Setting.class;
 
@@ -140,7 +125,6 @@ public class Home_Activity extends AppCompatActivity {
         };
 
         if (ibGraph != null) ibGraph.setOnClickListener(navListener);
-        if (ibMusic != null) ibMusic.setOnClickListener(navListener);
         if (ibClock != null) ibClock.setOnClickListener(navListener);
         if (ibSettings != null) ibSettings.setOnClickListener(navListener);
     }
@@ -178,15 +162,21 @@ public class Home_Activity extends AppCompatActivity {
     public double getHistoryData(List<HabitAction> actions) {
         double result = 0;
         for (HabitAction action : actions) {
-            if (databaseHelper.isToday(action.getActionTime())) result += action.getValue();
+            if (action.getActionTime() != null && action.getActionTime().startsWith(selectedDate)) {
+                result += action.getValue();
+            }
         }
         return result;
     }
 
-    private void showHabitOptions(ListviewHomeTest item) {
-        if (item == null || idUser == null) return;
+    public void showHabitOptions(ListviewHomeTest item) {
+        if (item == null) return;
+        
+        if (idUser == null && acc != null && acc.getUsername() != null) {
+            idUser = databaseHelper.getAccountIdByUsernameAndPassword(acc.getUsername(), acc.getPassword());
+        }
 
-        String[] options = {"Xem chi tiết", "Chỉnh sửa", "Xoá"};
+        String[] options = {"Tuỳ chỉnh", "Chỉnh sửa", "Xoá"};
         new AlertDialog.Builder(this)
                 .setTitle(item.getNameHabit())
                 .setItems(options, (dialog, which) -> {
@@ -211,9 +201,11 @@ public class Home_Activity extends AppCompatActivity {
                                 .setTitle("Xác nhận xoá")
                                 .setMessage("Bạn có chắc muốn xoá thói quen này không?")
                                 .setPositiveButton("Xoá", (d, w) -> {
-                                    databaseHelper.deleteHabit(idUser, item.getHabitId());
-                                    getListHabit();
-                                    Toast.makeText(this, "Đã xoá thói quen", Toast.LENGTH_SHORT).show();
+                                    if (idUser != null) {
+                                        databaseHelper.deleteHabit(idUser, item.getHabitId());
+                                        getListHabit();
+                                        Toast.makeText(this, "Đã xoá thói quen", Toast.LENGTH_SHORT).show();
+                                    }
                                 })
                                 .setNegativeButton("Huỷ", null)
                                 .show();
@@ -226,7 +218,9 @@ public class Home_Activity extends AppCompatActivity {
         if (idUser == null) return;
         for (Habit habit : databaseHelper.getHabitsByUser(idUser)) {
             Calendar cal = databaseHelper.parseReminderTime(habit.getThoiGianNhacNho());
-            setTimer(cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), habit.getLoiNhacNho());
+            if (cal != null) {
+                setTimer(cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), habit.getLoiNhacNho());
+            }
         }
     }
 

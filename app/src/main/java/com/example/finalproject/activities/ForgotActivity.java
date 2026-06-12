@@ -30,6 +30,10 @@ public class ForgotActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Ẩn ActionBar để background lên sát đỉnh màn hình
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
+        }
         setContentView(R.layout.activity_forgot);
 
         databaseHelper = HabitDatabaseHelper.getInstance(this);
@@ -76,8 +80,8 @@ public class ForgotActivity extends AppCompatActivity {
 
     private void sendPasswordEmail(Account account, String recipientEmail) {
         String currentPassword = account.getPassword();
-        String senderEmail = "01215165330asd@gmail.com";
-        String senderPassword = "uwcpdnjcsxhchtcv"; // App Password 16 ký tự của Gmail
+        String senderEmail = "n22dcat047@student.ptithcm.edu.vn";
+        String senderPassword = "cxwckxwwwtclpsxa"; 
         
         String subject = "Habit Tracker - Khôi phục mật khẩu";
         String messageBody = "Xin chào " + account.getName() + ",\n\nMật khẩu đăng nhập của bạn là: " + currentPassword;

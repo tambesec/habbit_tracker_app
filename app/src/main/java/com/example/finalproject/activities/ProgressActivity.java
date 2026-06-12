@@ -42,7 +42,7 @@ public class ProgressActivity extends AppCompatActivity {
     private String idHabit, idTaiKhoan;
     
     TextView txtDIM, txtTTD, txtVTT, txtCS, tvDetail;
-    ImageButton ibHome, ibMusic, ibClock, ibSettings;
+    ImageButton ibHome, ibClock, ibSettings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,7 +86,6 @@ public class ProgressActivity extends AppCompatActivity {
 
         // Bottom Navigation
         findViewById(R.id.ib_home).setOnClickListener(v -> navigateTo(Home_Activity.class));
-        findViewById(R.id.ib_music).setOnClickListener(v -> navigateTo(SongsActivity.class));
         findViewById(R.id.ib_clock).setOnClickListener(v -> navigateTo(Pomorodo.class));
         findViewById(R.id.ib_settings).setOnClickListener(v -> navigateTo(Setting.class));
     }

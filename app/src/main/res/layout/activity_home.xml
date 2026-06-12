@@ -28,14 +28,6 @@
             android:orientation="vertical"
             android:paddingBottom="8dp">
 
-            <com.harrywhewell.scrolldatepicker.DayScrollDatePicker
-                android:id="@+id/day_date_picker"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:baseTextColor="#495057"
-                app:selectedTextColor="#187BCE"
-                app:selectedColor="#E7F3FF" />
-
             <TextView
                 android:id="@+id/txtCurrentDay"
                 android:layout_width="match_parent"
@@ -43,8 +35,8 @@
                 android:gravity="center"
                 android:padding="8dp"
                 android:text="Ngày hiện tại"
-                android:textColor="#495057"
-                android:textSize="16sp"
+                android:textColor="#187BCE"
+                android:textSize="18sp"
                 android:textStyle="bold" />
         </LinearLayout>
     </com.google.android.material.appbar.AppBarLayout>
@@ -65,7 +57,10 @@
             android:layout_height="match_parent"
             android:divider="@android:color/transparent"
             android:dividerHeight="8dp"
-            android:padding="16dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="120dp"
             android:clipToPadding="false"
             android:scrollbars="none" />
     </com.google.android.material.card.MaterialCardView>
@@ -116,20 +111,8 @@
                 android:padding="12dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/home_graph"
-                app:layout_constraintEnd_toStartOf="@+id/ib_music"
-                app:layout_constraintStart_toEndOf="@+id/ib_home"
-                app:tint="#495057" />
-
-            <ImageButton
-                android:id="@+id/ib_music"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:padding="12dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/home_music"
                 app:layout_constraintEnd_toStartOf="@+id/ib_clock"
-                app:layout_constraintStart_toEndOf="@+id/ib_graph"
+                app:layout_constraintStart_toEndOf="@+id/ib_home"
                 app:tint="#495057" />
 
             <ImageButton
@@ -141,7 +124,7 @@
                 android:scaleType="fitCenter"
                 android:src="@drawable/home_clock"
                 app:layout_constraintEnd_toStartOf="@+id/ib_settings"
-                app:layout_constraintStart_toEndOf="@+id/ib_music"
+                app:layout_constraintStart_toEndOf="@+id/ib_graph"
                 app:tint="#495057" />
 
             <ImageButton

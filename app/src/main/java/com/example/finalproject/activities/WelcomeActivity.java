@@ -34,6 +34,10 @@ public class WelcomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Ẩn ActionBar để background lên sát đỉnh
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
+        }
         setContentView(R.layout.activity_welcome);
 
         databaseHelper = HabitDatabaseHelper.getInstance(this);
@@ -62,12 +66,10 @@ public class WelcomeActivity extends AppCompatActivity {
         if (savedUser != null && savedPass != null) {
             long currentTime = System.currentTimeMillis();
             if (currentTime - savedTime < ONE_MONTH_MS) {
-                // Tự động điền và đăng nhập hoặc chuyển hướng thẳng
                 etUsername.setText(savedUser);
                 etPassword.setText(savedPass);
                 autoLogin(savedUser, savedPass);
             } else {
-                // Hết hạn 1 tháng, xóa thông tin
                 clearRememberedLogin();
             }
         }

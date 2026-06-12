@@ -38,7 +38,7 @@
                     android:id="@+id/textView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Edit Habit"
+                    android:text="Chỉnh sửa thói quen"
                     android:textColor="#187BCE"
                     android:textSize="20sp"
                     android:textStyle="bold"
@@ -80,7 +80,7 @@
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Habit Name"
+                        android:hint="Tên thói quen"
                         app:boxCornerRadiusTopEnd="12dp"
                         app:boxCornerRadiusTopStart="12dp"
                         app:boxCornerRadiusBottomEnd="12dp"
@@ -98,7 +98,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
-                        android:hint="Description"
+                        android:hint="Mô tả"
                         app:boxCornerRadiusTopEnd="12dp"
                         app:boxCornerRadiusTopStart="12dp"
                         app:boxCornerRadiusBottomEnd="12dp"
@@ -132,7 +132,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Preferred Time"
+                        android:text="Thời gian ưa thích"
                         android:textColor="#212529"
                         android:textStyle="bold" />
 
@@ -195,7 +195,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerVertical="true"
-                            android:text="Daily Reminder"
+                            android:text="Nhắc nhở"
                             android:textColor="#212529"
                             android:textStyle="bold" />
 
@@ -215,7 +215,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
-                        android:hint="Reminder Message"
+                        android:hint="Nội dung nhắc nhở"
                         app:boxCornerRadiusTopEnd="12dp"
                         app:boxCornerRadiusTopStart="12dp"
                         app:boxCornerRadiusBottomEnd="12dp"
@@ -247,7 +247,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Goal Details"
+                        android:text="Mục tiêu"
                         android:textColor="#212529"
                         android:textStyle="bold" />
 

@@ -21,7 +21,7 @@ import java.util.Set;
 
 public class Progress_total extends AppCompatActivity {
 
-    private ImageButton ibHome, ibMusic, ibClock, ibSetting;
+    private ImageButton ibHome, ibClock, ibSetting;
     private TextView txtHabitDone, txtBestStreaks, txtPerfectDay; 
     private Account acc = new Account();
     private String idUser;
@@ -47,7 +47,6 @@ public class Progress_total extends AppCompatActivity {
         txtBestStreaks = findViewById(R.id.txtBestStreaks);
         txtPerfectDay = findViewById(R.id.txtPerfectDay);
         ibHome = findViewById(R.id.ib_home);
-        ibMusic = findViewById(R.id.ib_music);
         ibClock = findViewById(R.id.ib_clock);
         ibSetting = findViewById(R.id.ib_settings);
         calendar = findViewById(R.id.calendarView);
@@ -173,7 +172,6 @@ public class Progress_total extends AppCompatActivity {
 
     public void getEvents() {
         if (ibHome != null) ibHome.setOnClickListener(v -> navigateTo(Home_Activity.class));
-        if (ibMusic != null) ibMusic.setOnClickListener(v -> navigateTo(SongsActivity.class));
         if (ibClock != null) ibClock.setOnClickListener(v -> navigateTo(Pomorodo.class));
         if (ibSetting != null) ibSetting.setOnClickListener(v -> navigateTo(Setting.class));
     }

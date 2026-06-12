@@ -11,9 +11,12 @@
     app:strokeWidth="0dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/itemContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp">
+        android:padding="16dp"
+        android:background="?attr/selectableItemBackground"
+        android:descendantFocusability="blocksDescendants">
 
         <LinearLayout
             android:id="@+id/layoutInfo"
@@ -69,6 +72,8 @@
                     android:padding="11dp"
                     android:scaleType="fitCenter"
                     android:src="@drawable/home_list_minus"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
                     app:tint="#DC3545" />
             </com.google.android.material.card.MaterialCardView>
 
@@ -88,6 +93,8 @@
                     android:padding="11dp"
                     android:scaleType="fitCenter"
                     android:src="@drawable/home_list_plus"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
                     app:tint="#187BCE" />
             </com.google.android.material.card.MaterialCardView>
         </LinearLayout>

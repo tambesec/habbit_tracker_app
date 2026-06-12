@@ -154,24 +154,6 @@
                         app:iconGravity="top" />
                 </com.google.android.material.card.MaterialCardView>
 
-                <!-- Song Button -->
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_columnWeight="1"
-                    android:layout_margin="8dp"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="2dp">
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnSong"
-                        style="@style/Widget.Material3.Button.TextButton"
-                        android:layout_width="match_parent"
-                        android:layout_height="100dp"
-                        android:text="Music"
-                        app:icon="@drawable/home_music"
-                        app:iconGravity="top" />
-                </com.google.android.material.card.MaterialCardView>
-
                 <!-- Pomodoro Button -->
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="0dp"

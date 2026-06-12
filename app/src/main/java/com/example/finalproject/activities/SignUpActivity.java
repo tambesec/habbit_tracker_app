@@ -19,11 +19,15 @@ public class SignUpActivity extends AppCompatActivity {
     HabitDatabaseHelper databaseHelper;
     TextView tvWelcomeTitle, btnLogin_SignUp;
     MaterialButton btnSignup;
-    EditText edtUsername, edtPassword, edtRepassword;
+    EditText edtUsername, edtEmail, edtPassword, edtRepassword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Ẩn ActionBar để background lên sát đỉnh màn hình
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
+        }
         setContentView(R.layout.activity_sign_up);
 
         databaseHelper = HabitDatabaseHelper.getInstance(this);
@@ -33,6 +37,7 @@ public class SignUpActivity extends AppCompatActivity {
         btnLogin_SignUp = findViewById(R.id.btnLogin_SignUp);
         tvWelcomeTitle = findViewById(R.id.tvWelcomeTitle);
         edtUsername = findViewById(R.id.edtUsername);
+        edtEmail = findViewById(R.id.edtEmail);
         edtPassword = findViewById(R.id.edtPassword);
         edtRepassword = findViewById(R.id.edtRepassword);
 
@@ -43,8 +48,9 @@ public class SignUpActivity extends AppCompatActivity {
 
         tvWelcomeTitle.setAnimation(animation_tv);
         edtUsername.setAnimation(animation_et_left);
-        edtPassword.setAnimation(animation_et_right);
-        edtRepassword.setAnimation(animation_et_left);
+        edtEmail.setAnimation(animation_et_right);
+        edtPassword.setAnimation(animation_et_left);
+        edtRepassword.setAnimation(animation_et_right);
 
         // Xử lý sự kiện
         btnSignup.setOnClickListener(v -> SignUp());
@@ -56,17 +62,24 @@ public class SignUpActivity extends AppCompatActivity {
 
     public void SignUp() {
         String username = edtUsername.getText().toString().trim();
+        String email = edtEmail.getText().toString().trim();
         String password = edtPassword.getText().toString().trim();
         String rePassword = edtRepassword.getText().toString().trim();
 
-        if (TextUtils.isEmpty(username) || TextUtils.isEmpty(password)) {
+        if (TextUtils.isEmpty(username) || TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
             Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Kiểm tra định dạng email cơ bản
+        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            Toast.makeText(this, "Email không hợp lệ", Toast.LENGTH_SHORT).show();
             return;
         }
 
         // Kiểm tra username trùng lặp
         if (databaseHelper.getAllAccounts().stream().anyMatch(acc -> username.equals(acc.getUsername()))) {
-            Toast.makeText(this, "Tên đăng nhập đã tồn tại", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Tên người dùng đã tồn tại", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -82,7 +95,7 @@ public class SignUpActivity extends AppCompatActivity {
         newAccount.setName("Người dùng mới");
         newAccount.setSex("Nam");
         newAccount.setBorn("01-01-2000");
-        newAccount.setGmail("Chưa thiết lập");
+        newAccount.setGmail(email);
         newAccount.setPhone("Chưa thiết lập");
 
         databaseHelper.insertAccount(newAccount);

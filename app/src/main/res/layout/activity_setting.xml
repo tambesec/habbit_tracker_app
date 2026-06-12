@@ -17,7 +17,9 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:title="Settings"
+            app:navigationIcon="@drawable/baseline_arrow_back_24"
+            app:navigationIconTint="#187BCE"
+            app:title="Cài đặt"
             app:titleCentered="true"
             app:titleTextColor="#187BCE"
             app:titleTextAppearance="@style/TextAppearance.Material3.TitleLarge" />
@@ -68,7 +70,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
-                        android:text="User Name"
+                        android:text="Tên người dùng"
                         android:textColor="#212529"
                         android:textSize="20sp"
                         android:textStyle="bold"
@@ -110,16 +112,16 @@
                             android:orientation="horizontal"
                             android:paddingVertical="4dp">
                             <TextView
-                                android:layout_width="100dp"
+                                android:layout_width="120dp"
                                 android:layout_height="wrap_content"
-                                android:text="Gender"
+                                android:text="Giới tính"
                                 android:textColor="#6c757d"
                                 android:textStyle="bold" />
                             <TextView
                                 android:id="@+id/txtgender"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Male"
+                                android:text="Nam"
                                 android:textColor="#495057" />
                         </LinearLayout>
 
@@ -129,9 +131,9 @@
                             android:orientation="horizontal"
                             android:paddingVertical="4dp">
                             <TextView
-                                android:layout_width="100dp"
+                                android:layout_width="120dp"
                                 android:layout_height="wrap_content"
-                                android:text="Birthday"
+                                android:text="Ngày sinh"
                                 android:textColor="#6c757d"
                                 android:textStyle="bold" />
                             <TextView
@@ -148,9 +150,9 @@
                             android:orientation="horizontal"
                             android:paddingVertical="4dp">
                             <TextView
-                                android:layout_width="100dp"
+                                android:layout_width="120dp"
                                 android:layout_height="wrap_content"
-                                android:text="Phone"
+                                android:text="Số điện thoại"
                                 android:textColor="#6c757d"
                                 android:textStyle="bold" />
                             <TextView
@@ -168,7 +170,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
-                        android:text="Edit Profile"
+                        android:text="Chỉnh sửa hồ sơ"
                         app:cornerRadius="12dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/infoLayout" />
@@ -176,7 +178,7 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Settings Options -->
+            <!-- Settings Options Card -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -191,7 +193,7 @@
                 style="@style/Widget.Material3.Button.TonalButton"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
-                android:text="Log Out"
+                android:text="Đăng xuất"
                 android:textColor="#DC3545"
                 app:cornerRadius="16dp"
                 app:icon="@drawable/baseline_arrow_back_24"
@@ -234,20 +236,8 @@
                 android:padding="12dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/home_graph"
-                app:layout_constraintEnd_toStartOf="@+id/ib_music"
-                app:layout_constraintStart_toEndOf="@+id/ib_home"
-                app:tint="#495057" />
-
-            <ImageButton
-                android:id="@+id/ib_music"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:padding="12dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/home_music"
                 app:layout_constraintEnd_toStartOf="@+id/ib_clock"
-                app:layout_constraintStart_toEndOf="@+id/ib_graph"
+                app:layout_constraintStart_toEndOf="@+id/ib_home"
                 app:tint="#495057" />
 
             <ImageButton
@@ -259,7 +249,7 @@
                 android:scaleType="fitCenter"
                 android:src="@drawable/home_clock"
                 app:layout_constraintEnd_toStartOf="@+id/ib_settings"
-                app:layout_constraintStart_toEndOf="@+id/ib_music"
+                app:layout_constraintStart_toEndOf="@+id/ib_graph"
                 app:tint="#495057" />
 
             <ImageButton

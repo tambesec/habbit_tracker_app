@@ -8,7 +8,7 @@ import com.example.finalproject.R;
 
 public class MainActivity extends AppCompatActivity {
     // Khai báo các nút bấm theo giao diện Material 3 mới
-    MaterialButton btnWelcome, btnHomeMain, btnSettings, btnCreateHabit, btnProgress, btnSong, btnPomorodo, btnLaunchApp;
+    MaterialButton btnWelcome, btnHomeMain, btnSettings, btnCreateHabit, btnProgress, btnPomorodo, btnLaunchApp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,7 +21,6 @@ public class MainActivity extends AppCompatActivity {
         btnSettings = findViewById(R.id.btnSettings);
         btnCreateHabit = findViewById(R.id.btnCreateHabit);
         btnProgress = findViewById(R.id.btnProgress);
-        btnSong = findViewById(R.id.btnSong);
         btnPomorodo = findViewById(R.id.btnPomorodo);
         btnLaunchApp = findViewById(R.id.button);
 
@@ -31,7 +30,6 @@ public class MainActivity extends AppCompatActivity {
         btnSettings.setOnClickListener(v -> startActivity(new Intent(this, Setting.class)));
         btnCreateHabit.setOnClickListener(v -> startActivity(new Intent(this, Create_habit.class)));
         btnProgress.setOnClickListener(v -> startActivity(new Intent(this, ProgressActivity.class)));
-        btnSong.setOnClickListener(v -> startActivity(new Intent(this, SongsActivity.class)));
         btnPomorodo.setOnClickListener(v -> startActivity(new Intent(this, Pomorodo.class)));
         btnLaunchApp.setOnClickListener(v -> startActivity(new Intent(this, WelcomeActivity.class)));
     }
