@@ -41,19 +41,19 @@
                 android:id="@+id/tabDay"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Day" />
+                android:text="Ngày" />
 
             <com.google.android.material.tabs.TabItem
                 android:id="@+id/tabWeek"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Week" />
+                android:text="Tuần" />
 
             <com.google.android.material.tabs.TabItem
                 android:id="@+id/tabMonth"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Month" />
+                android:text="Tháng" />
         </com.google.android.material.tabs.TabLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -118,7 +118,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Current Streak"
+                            android:text="Chuỗi hiện tại"
                             android:textColor="#6c757d"
                             android:textSize="12sp" />
                     </LinearLayout>
@@ -200,7 +200,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Done in month"
+                            android:text="Hoàn thành trong tháng"
                             android:textColor="#6c757d"
                             android:textSize="12sp" />
                     </LinearLayout>
@@ -241,7 +241,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Total Done"
+                            android:text="Hoàn thành"
                             android:textColor="#6c757d"
                             android:textSize="12sp" />
                     </LinearLayout>
@@ -264,7 +264,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="4dp"
                     android:layout_weight="1"
-                    android:text="Edit"
+                    android:text="Sửa"
                     app:cornerRadius="12dp" />
 
                 <com.google.android.material.button.MaterialButton
@@ -274,7 +274,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="4dp"
                     android:layout_weight="1"
-                    android:text="Infor"
+                    android:text="Thông tin"
                     app:cornerRadius="12dp" />
 
                 <com.google.android.material.button.MaterialButton
@@ -284,7 +284,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="4dp"
                     android:layout_weight="1"
-                    android:text="Delete"
+                    android:text="Xoá"
                     android:textColor="#DC3545"
                     app:cornerRadius="12dp" />
             </LinearLayout>

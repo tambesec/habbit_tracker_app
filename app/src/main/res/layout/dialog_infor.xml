@@ -22,7 +22,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Habit Details"
+                android:text="Chi tiết thói quen"
                 android:textColor="#187BCE"
                 android:textSize="22sp"
                 android:textStyle="bold" />
@@ -52,7 +52,7 @@
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Name"
+                    android:hint="Tên thói quen"
                     app:boxCornerRadiusTopEnd="12dp"
                     app:boxCornerRadiusTopStart="12dp"
                     app:boxCornerRadiusBottomEnd="12dp"
@@ -71,11 +71,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
-                    android:hint="Description"
+                    android:hint="Mô tả"
                     app:boxCornerRadiusTopEnd="12dp"
                     app:boxCornerRadiusTopStart="12dp"
                     app:boxCornerRadiusBottomEnd="12dp"
                     app:boxCornerRadiusBottomStart="12dp">
+
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/edt_decription"
                         android:layout_width="match_parent"
@@ -96,7 +97,7 @@
                         android:layout_height="wrap_content"
                         android:layout_columnWeight="1"
                         android:layout_marginEnd="6dp"
-                        android:hint="Goal"
+                        android:hint="Mục tiêu"
                         app:boxCornerRadiusTopEnd="12dp"
                         app:boxCornerRadiusTopStart="12dp"
                         app:boxCornerRadiusBottomEnd="12dp"
@@ -119,12 +120,16 @@
                         app:boxCornerRadiusTopStart="12dp"
                         app:boxCornerRadiusBottomEnd="12dp"
                         app:boxCornerRadiusBottomStart="12dp">
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/edt_unit"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:enabled="false" />
+
                     </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/edt_unit"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_row="0"
+                        android:layout_column="1"
+                        android:enabled="false" />
                 </GridLayout>
 
                 <LinearLayout
@@ -139,7 +144,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:layout_marginEnd="6dp"
-                        android:hint="Start Date"
+                        android:hint="Ngày bắt đầu"
                         app:boxCornerRadiusTopEnd="12dp"
                         app:boxCornerRadiusTopStart="12dp"
                         app:boxCornerRadiusBottomEnd="12dp"
@@ -157,7 +162,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:layout_marginStart="6dp"
-                        android:hint="End Date"
+                        android:hint="Ngày kết thúc"
                         app:boxCornerRadiusTopEnd="12dp"
                         app:boxCornerRadiusTopStart="12dp"
                         app:boxCornerRadiusBottomEnd="12dp"
@@ -175,7 +180,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
-                    android:hint="Reminder Time"
+                    android:hint="Thời gian nhắc nhở"
                     app:boxCornerRadiusTopEnd="12dp"
                     app:boxCornerRadiusTopStart="12dp"
                     app:boxCornerRadiusBottomEnd="12dp"

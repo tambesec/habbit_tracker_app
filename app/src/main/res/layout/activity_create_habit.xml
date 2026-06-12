@@ -324,7 +324,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
-                        android:text="Unit increase per action"
+                        android:text="Đơn vị mỗi hành động"
                         android:textColor="#6c757d"
                         android:textSize="12sp" />
                     
@@ -341,7 +341,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
-                        android:text="Habit Duration"
+                        android:text="Thời gian thói quen"
                         android:textColor="#212529"
                         android:textStyle="bold" />
 
@@ -358,7 +358,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Start Date"
+                            android:text="Ngày bắt đầu"
                             app:cornerRadius="8dp" />
 
                         <TextView
@@ -375,7 +375,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="End Date"
+                            android:text="Ngày kết thúc"
                             app:cornerRadius="8dp" />
                     </LinearLayout>
                 </LinearLayout>
@@ -385,7 +385,7 @@
                 android:id="@+id/btnComplete"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                android:text="Create Habit"
+                android:text="Tạo thói quen"
                 android:textAllCaps="false"
                 android:textSize="18sp"
                 app:backgroundTint="#187BCE"

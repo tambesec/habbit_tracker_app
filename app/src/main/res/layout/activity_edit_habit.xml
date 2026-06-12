@@ -149,7 +149,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:layout_marginEnd="4dp"
-                            android:text="Morning"
+                            android:text="Sáng"
                             android:textSize="10sp"
                             app:cornerRadius="8dp" />
 
@@ -160,7 +160,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:layout_marginEnd="4dp"
-                            android:text="Afternoon"
+                            android:text="Chiều"
                             android:textSize="10sp"
                             app:cornerRadius="8dp" />
 
@@ -171,7 +171,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:layout_marginEnd="4dp"
-                            android:text="Evening"
+                            android:text="Tối"
                             android:textSize="10sp"
                             app:cornerRadius="8dp" />
 
@@ -181,7 +181,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Anytime"
+                            android:text="Any"
                             android:textSize="10sp"
                             app:cornerRadius="8dp" />
                     </LinearLayout>
@@ -205,7 +205,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentEnd="true"
-                            android:text="Set Time"
+                            android:text="Hẹn giờ"
                             app:cornerRadius="8dp"
                             app:icon="@drawable/home_clock" />
                     </RelativeLayout>
@@ -236,150 +236,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="32dp"
                 app:cardCornerRadius="16dp"
-                app:cardElevation="2dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Mục tiêu"
-                        android:textColor="#212529"
-                        android:textStyle="bold" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
-
-                        <com.google.android.material.textfield.TextInputLayout
-                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                            android:layout_width="100dp"
-                            android:layout_height="wrap_content"
-                            android:hint="Value">
-
-                            <com.google.android.material.textfield.TextInputEditText
-                                android:id="@+id/editNumber"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:inputType="numberDecimal" />
-                        </com.google.android.material.textfield.TextInputLayout>
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/btnDonVi"
-                            style="@style/Widget.Material3.Button.TonalButton"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
-                            android:text="km"
-                            app:cornerRadius="8dp" />
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
-                            android:gravity="end"
-                            android:orientation="horizontal">
-                            <com.google.android.material.button.MaterialButton
-                                android:id="@+id/btnDay"
-                                style="@style/Widget.Material3.Button.TonalButton"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginEnd="2dp"
-                                android:paddingHorizontal="4dp"
-                                android:text="D"
-                                app:cornerRadius="4dp" />
-                            <com.google.android.material.button.MaterialButton
-                                android:id="@+id/btnWeek"
-                                style="@style/Widget.Material3.Button.TonalButton"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginEnd="2dp"
-                                android:paddingHorizontal="4dp"
-                                android:text="W"
-                                app:cornerRadius="4dp" />
-                            <com.google.android.material.button.MaterialButton
-                                android:id="@+id/btnMonth"
-                                style="@style/Widget.Material3.Button.TonalButton"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:paddingHorizontal="4dp"
-                                android:text="M"
-                                app:cornerRadius="4dp" />
-                        </LinearLayout>
-                    </LinearLayout>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:text="Current unit increase:"
-                        android:textColor="#6c757d"
-                        android:textSize="12sp" />
-                    
-                    <TextView
-                        android:id="@+id/txtIncrease"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="0.1"
-                        android:textColor="#187BCE"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:text="Habit Term"
-                        android:textColor="#212529"
-                        android:textStyle="bold" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:gravity="center"
-                        android:orientation="horizontal">
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/btnBatDau"
-                            style="@style/Widget.Material3.Button.OutlinedButton"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Start Date"
-                            app:cornerRadius="8dp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="12dp"
-                            android:text="→"
-                            android:textSize="20sp" />
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/btnKetThuc"
-                            style="@style/Widget.Material3.Button.OutlinedButton"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="End Date"
-                            app:cornerRadius="8dp" />
-                    </LinearLayout>
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+                app:cardElevation="2dp"/>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnComplete"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                android:text="Save Changes"
+                android:text="Lưu thay đổi"
                 android:textAllCaps="false"
                 android:textSize="18sp"
                 app:backgroundTint="#187BCE"

@@ -24,7 +24,7 @@
                 android:id="@+id/tv_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Daily Habit Stats"
+                android:text="Thống kê thói quen hàng ngày"
                 android:textColor="#212529"
                 android:textSize="18sp"
                 android:textStyle="bold" />

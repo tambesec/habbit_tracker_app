@@ -18,7 +18,7 @@
         android:id="@+id/dialogTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Delete Habit?"
+        android:text="Xoá thói quen"
         android:textColor="#212529"
         android:textSize="20sp"
         android:textStyle="bold" />
@@ -29,7 +29,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:paddingTop="8dp"
-        android:text="Do you want to remove this habit?\nThis action cannot be undone."
+        android:text="Bạn có muốn xoá thói quen này không?"
         android:textColor="#6c757d"
         android:textSize="16sp" />
 
