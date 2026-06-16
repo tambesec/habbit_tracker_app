@@ -2,17 +2,16 @@ package com.example.finalproject.activities;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.TextView;
 import android.widget.Toast;
-import android.text.InputType;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.finalproject.R;
@@ -27,26 +26,23 @@ import java.util.Locale;
 
 public class Edit_habit extends AppCompatActivity {
     private HabitDatabaseHelper databaseHelper;
-    private String isTimeRangeSelected = "Anytime";
-    private int defaultColor = Color.parseColor("#d0ebff");
+    private String isTimeRangeSelected = "Mọi lúc";
+    private int defaultColor = Color.parseColor("#F3E5F5");
     private int selectedColor = Color.parseColor("#187BCE");
+    private int selectedTextColor = Color.WHITE;
+    private int defaultTextColor = Color.BLACK;
     private final int[] clickCount = {0};
-    private String period = "Day";
-
-    private boolean isDaySelected = false;
-    private boolean isWeekSelected = false;
-    private boolean isMonthSelected = false;
-    private int implementationDays = 1;
+    private String period = "Ngày";
 
     private Button btnComplete;
     private ImageButton btnBack;
     private String idTaiKhoan;
     private String idThoiQuen;
-    private TextView txtIncrease;
-    private EditText editName, editDescription, editReminderMessage, editNumber;
+    private EditText editName, editDescription, editReminderMessage, editNumber, editIncrease;
     private Button btnMorning, btnAfternoon, btnEvening, btnAnytime, btntime;
     private Button btnDonVi, btnDay, btnWeek, btnMonth;
     private Button btnBatDau, btnKetThuc;
+    private Button btnIncreaseInc, btnDecreaseInc;
     private Account acc;
 
     @Override
@@ -71,7 +67,7 @@ public class Edit_habit extends AppCompatActivity {
         btnComplete = findViewById(R.id.btnComplete);
         editName = findViewById(R.id.editName);
         editDescription = findViewById(R.id.editDescription);
-        txtIncrease = findViewById(R.id.txtIncrease);
+        editIncrease = findViewById(R.id.editIncrease);
         editReminderMessage = findViewById(R.id.editReminderMessage);
         editNumber = findViewById(R.id.editNumber);
         btntime = findViewById(R.id.btntime);
@@ -89,10 +85,38 @@ public class Edit_habit extends AppCompatActivity {
         btnWeek = findViewById(R.id.btnWeek);
         btnMonth = findViewById(R.id.btnMonth);
 
+        btnIncreaseInc = findViewById(R.id.btnIncreaseInc);
+        btnDecreaseInc = findViewById(R.id.btnDecreaseInc);
+
+        btnAnytime.setText("Mọi lúc");
+
         setupTimeRangeListeners();
         setupGoalListeners();
         setupDatePickers();
         setupPeriodListeners();
+        setupIncreaseButtons();
+    }
+
+    private void setupIncreaseButtons() {
+        btnIncreaseInc.setOnClickListener(v -> {
+            try {
+                double current = Double.parseDouble(editIncrease.getText().toString());
+                editIncrease.setText(String.valueOf(Math.round((current + 0.1) * 10.0) / 10.0));
+            } catch (Exception e) {
+                editIncrease.setText("0.1");
+            }
+        });
+
+        btnDecreaseInc.setOnClickListener(v -> {
+            try {
+                double current = Double.parseDouble(editIncrease.getText().toString());
+                if (current > 0.1) {
+                    editIncrease.setText(String.valueOf(Math.round((current - 0.1) * 10.0) / 10.0));
+                }
+            } catch (Exception e) {
+                editIncrease.setText("0.1");
+            }
+        });
     }
 
     private void showInfor() {
@@ -105,7 +129,7 @@ public class Edit_habit extends AppCompatActivity {
 
         editName.setText(habit.getTen());
         editDescription.setText(habit.getMoTa());
-        txtIncrease.setText(String.valueOf(habit.getDonViTang()));
+        editIncrease.setText(String.valueOf(habit.getDonViTang()));
         editReminderMessage.setText(habit.getLoiNhacNho());
         editNumber.setText(String.valueOf(habit.getMucTieu()));
         btntime.setText(habit.getThoiGianNhacNho());
@@ -114,9 +138,17 @@ public class Edit_habit extends AppCompatActivity {
         btnDonVi.setText(habit.getDonVi());
         
         isTimeRangeSelected = habit.getThoiDiem();
+        // Đồng bộ hóa giá trị cũ từ tiếng Anh sang tiếng Việt nếu cần
+        if ("Morning".equalsIgnoreCase(isTimeRangeSelected)) isTimeRangeSelected = "Sáng";
+        else if ("Afternoon".equalsIgnoreCase(isTimeRangeSelected)) isTimeRangeSelected = "Chiều";
+        else if ("Evening".equalsIgnoreCase(isTimeRangeSelected)) isTimeRangeSelected = "Tối";
+        else if ("Anytime".equalsIgnoreCase(isTimeRangeSelected)) isTimeRangeSelected = "Mọi lúc";
         updateTimeRangeUI();
         
         period = habit.getKhoangThoiGian();
+        if ("Day".equalsIgnoreCase(period)) period = "Ngày";
+        else if ("Week".equalsIgnoreCase(period)) period = "Tuần";
+        else if ("Month".equalsIgnoreCase(period)) period = "Tháng";
         updatePeriodUI();
     }
 
@@ -132,11 +164,16 @@ public class Edit_habit extends AppCompatActivity {
         Habit habit = databaseHelper.getHabit(idTaiKhoan, idThoiQuen);
         if (habit == null) habit = new Habit();
 
+        double increase = 0.1;
+        try {
+            increase = Double.parseDouble(editIncrease.getText().toString());
+        } catch (Exception ignored) {}
+
         habit.setTen(name);
         habit.setMoTa(editDescription.getText().toString());
         habit.setMucTieu(Double.parseDouble(goalStr));
         habit.setDonVi(btnDonVi.getText().toString());
-        habit.setDonViTang(Double.parseDouble(txtIncrease.getText().toString()));
+        habit.setDonViTang(increase);
         habit.setThoiDiem(isTimeRangeSelected);
         habit.setThoiGianNhacNho(btntime.getText().toString());
         habit.setThoiGianBatDau(btnBatDau.getText().toString());
@@ -154,16 +191,11 @@ public class Edit_habit extends AppCompatActivity {
 
     private void setupTimeRangeListeners() {
         View.OnClickListener listener = v -> {
-            btnMorning.setBackgroundColor(defaultColor);
-            btnAfternoon.setBackgroundColor(defaultColor);
-            btnEvening.setBackgroundColor(defaultColor);
-            btnAnytime.setBackgroundColor(defaultColor);
-            v.setBackgroundColor(selectedColor);
-            
-            if (v.getId() == R.id.btnMorning) isTimeRangeSelected = "Morning";
-            else if (v.getId() == R.id.btnAfternoon) isTimeRangeSelected = "Afternoon";
-            else if (v.getId() == R.id.btnEvening) isTimeRangeSelected = "Evening";
-            else isTimeRangeSelected = "Anytime";
+            if (v.getId() == R.id.btnMorning) isTimeRangeSelected = "Sáng";
+            else if (v.getId() == R.id.btnAfternoon) isTimeRangeSelected = "Chiều";
+            else if (v.getId() == R.id.btnEvening) isTimeRangeSelected = "Tối";
+            else isTimeRangeSelected = "Mọi lúc";
+            updateTimeRangeUI();
         };
         btnMorning.setOnClickListener(listener);
         btnAfternoon.setOnClickListener(listener);
@@ -172,27 +204,23 @@ public class Edit_habit extends AppCompatActivity {
     }
 
     private void updateTimeRangeUI() {
-        btnMorning.setBackgroundColor(defaultColor);
-        btnAfternoon.setBackgroundColor(defaultColor);
-        btnEvening.setBackgroundColor(defaultColor);
-        btnAnytime.setBackgroundColor(defaultColor);
-        
-        if ("Morning".equals(isTimeRangeSelected)) btnMorning.setBackgroundColor(selectedColor);
-        else if ("Afternoon".equals(isTimeRangeSelected)) btnAfternoon.setBackgroundColor(selectedColor);
-        else if ("Evening".equals(isTimeRangeSelected)) btnEvening.setBackgroundColor(selectedColor);
-        else btnAnytime.setBackgroundColor(selectedColor);
+        if (btnMorning == null) return;
+        btnMorning.setBackgroundColor(isTimeRangeSelected.equals("Sáng") ? selectedColor : defaultColor);
+        btnMorning.setTextColor(isTimeRangeSelected.equals("Sáng") ? selectedTextColor : defaultTextColor);
+        btnAfternoon.setBackgroundColor(isTimeRangeSelected.equals("Chiều") ? selectedColor : defaultColor);
+        btnAfternoon.setTextColor(isTimeRangeSelected.equals("Chiều") ? selectedTextColor : defaultTextColor);
+        btnEvening.setBackgroundColor(isTimeRangeSelected.equals("Tối") ? selectedColor : defaultColor);
+        btnEvening.setTextColor(isTimeRangeSelected.equals("Tối") ? selectedTextColor : defaultTextColor);
+        btnAnytime.setBackgroundColor(isTimeRangeSelected.equals("Mọi lúc") ? selectedColor : defaultColor);
+        btnAnytime.setTextColor(isTimeRangeSelected.equals("Mọi lúc") ? selectedTextColor : defaultTextColor);
     }
 
     private void setupPeriodListeners() {
         View.OnClickListener listener = v -> {
-            btnDay.setBackgroundColor(defaultColor);
-            btnWeek.setBackgroundColor(defaultColor);
-            btnMonth.setBackgroundColor(defaultColor);
-            v.setBackgroundColor(selectedColor);
-            
-            if (v.getId() == R.id.btnDay) period = "Day";
-            else if (v.getId() == R.id.btnWeek) period = "Week";
-            else period = "Month";
+            if (v.getId() == R.id.btnDay) period = "Ngày";
+            else if (v.getId() == R.id.btnWeek) period = "Tuần";
+            else period = "Tháng";
+            updatePeriodUI();
         };
         btnDay.setOnClickListener(listener);
         btnWeek.setOnClickListener(listener);
@@ -200,13 +228,14 @@ public class Edit_habit extends AppCompatActivity {
     }
 
     private void updatePeriodUI() {
-        btnDay.setBackgroundColor(defaultColor);
-        btnWeek.setBackgroundColor(defaultColor);
-        btnMonth.setBackgroundColor(defaultColor);
+        btnDay.setBackgroundColor(period.equals("Ngày") ? selectedColor : defaultColor);
+        btnDay.setTextColor(period.equals("Ngày") ? selectedTextColor : defaultTextColor);
         
-        if ("Day".equals(period)) btnDay.setBackgroundColor(selectedColor);
-        else if ("Week".equals(period)) btnWeek.setBackgroundColor(selectedColor);
-        else if ("Month".equals(period)) btnMonth.setBackgroundColor(selectedColor);
+        btnWeek.setBackgroundColor(period.equals("Tuần") ? selectedColor : defaultColor);
+        btnWeek.setTextColor(period.equals("Tuần") ? selectedTextColor : defaultTextColor);
+        
+        btnMonth.setBackgroundColor(period.equals("Tháng") ? selectedColor : defaultColor);
+        btnMonth.setTextColor(period.equals("Tháng") ? selectedTextColor : defaultTextColor);
     }
 
     private void setupDatePickers() {
@@ -235,9 +264,9 @@ public class Edit_habit extends AppCompatActivity {
         btnDonVi.setOnClickListener(v -> {
             clickCount[0]++;
             switch (clickCount[0] % 3) {
-                case 0: btnDonVi.setText("km"); txtIncrease.setText("0.1"); editNumber.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL); break;
-                case 1: btnDonVi.setText("pages"); txtIncrease.setText("1"); editNumber.setInputType(InputType.TYPE_CLASS_NUMBER); break;
-                case 2: btnDonVi.setText("hours"); txtIncrease.setText("0.5"); editNumber.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL); break;
+                case 0: btnDonVi.setText("km"); editIncrease.setText("0.1"); editNumber.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL); break;
+                case 1: btnDonVi.setText("Trang"); editIncrease.setText("1"); editNumber.setInputType(InputType.TYPE_CLASS_NUMBER); break;
+                case 2: btnDonVi.setText("Giờ"); editIncrease.setText("0.5"); editNumber.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL); break;
             }
         });
     }

@@ -22,7 +22,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Chi tiết thói quen"
+                android:text="Thông tin thói quen"
                 android:textColor="#187BCE"
                 android:textSize="22sp"
                 android:textStyle="bold" />
@@ -40,7 +40,7 @@
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:maxHeight="400dp">
+            android:maxHeight="500dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -76,7 +76,6 @@
                     app:boxCornerRadiusTopStart="12dp"
                     app:boxCornerRadiusBottomEnd="12dp"
                     app:boxCornerRadiusBottomStart="12dp">
-
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/edt_decription"
                         android:layout_width="match_parent"
@@ -85,17 +84,18 @@
                         android:textColor="#212529" />
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <GridLayout
+                <!-- Mục tiêu & Đơn vị -->
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
-                    android:columnCount="2">
+                    android:orientation="horizontal">
 
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_columnWeight="1"
+                        android:layout_weight="1"
                         android:layout_marginEnd="6dp"
                         android:hint="Mục tiêu"
                         app:boxCornerRadiusTopEnd="12dp"
@@ -113,25 +113,22 @@
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_columnWeight="1"
+                        android:layout_weight="1"
                         android:layout_marginStart="6dp"
-                        android:hint="Unit"
+                        android:hint="Đơn vị"
                         app:boxCornerRadiusTopEnd="12dp"
                         app:boxCornerRadiusTopStart="12dp"
                         app:boxCornerRadiusBottomEnd="12dp"
                         app:boxCornerRadiusBottomStart="12dp">
-
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/edt_unit"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:enabled="false" />
                     </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/edt_unit"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_row="0"
-                        android:layout_column="1"
-                        android:enabled="false" />
-                </GridLayout>
-
+                <!-- Tần suất & Đơn vị tăng -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -144,7 +141,95 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:layout_marginEnd="6dp"
-                        android:hint="Ngày bắt đầu"
+                        android:hint="Tần suất"
+                        app:boxCornerRadiusTopEnd="12dp"
+                        app:boxCornerRadiusTopStart="12dp"
+                        app:boxCornerRadiusBottomEnd="12dp"
+                        app:boxCornerRadiusBottomStart="12dp">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/edt_period"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:enabled="false" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="6dp"
+                        android:hint="Tăng mỗi lần"
+                        app:boxCornerRadiusTopEnd="12dp"
+                        app:boxCornerRadiusTopStart="12dp"
+                        app:boxCornerRadiusBottomEnd="12dp"
+                        app:boxCornerRadiusBottomStart="12dp">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/edt_increase"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:enabled="false" />
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+
+                <!-- Thời điểm & Nhắc nhở -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="6dp"
+                        android:hint="Thời điểm"
+                        app:boxCornerRadiusTopEnd="12dp"
+                        app:boxCornerRadiusTopStart="12dp"
+                        app:boxCornerRadiusBottomEnd="12dp"
+                        app:boxCornerRadiusBottomStart="12dp">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/edt_time_range"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:enabled="false" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="6dp"
+                        android:hint="Giờ nhắc"
+                        app:boxCornerRadiusTopEnd="12dp"
+                        app:boxCornerRadiusTopStart="12dp"
+                        app:boxCornerRadiusBottomEnd="12dp"
+                        app:boxCornerRadiusBottomStart="12dp">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/edt_reminder"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:enabled="false" />
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+
+                <!-- Ngày bắt đầu & kết thúc -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="6dp"
+                        android:hint="Bắt đầu"
                         app:boxCornerRadiusTopEnd="12dp"
                         app:boxCornerRadiusTopStart="12dp"
                         app:boxCornerRadiusBottomEnd="12dp"
@@ -162,7 +247,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:layout_marginStart="6dp"
-                        android:hint="Ngày kết thúc"
+                        android:hint="Kết thúc"
                         app:boxCornerRadiusTopEnd="12dp"
                         app:boxCornerRadiusTopStart="12dp"
                         app:boxCornerRadiusBottomEnd="12dp"
@@ -175,25 +260,7 @@
                     </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
 
-                <com.google.android.material.textfield.TextInputLayout
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:hint="Thời gian nhắc nhở"
-                    app:boxCornerRadiusTopEnd="12dp"
-                    app:boxCornerRadiusTopStart="12dp"
-                    app:boxCornerRadiusBottomEnd="12dp"
-                    app:boxCornerRadiusBottomStart="12dp">
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/edt_reminder"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:enabled="false" />
-                </com.google.android.material.textfield.TextInputLayout>
-
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
-
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

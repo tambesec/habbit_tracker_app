@@ -1,14 +1,19 @@
 package com.example.finalproject.activities;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
 import android.app.AlarmManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -25,7 +30,6 @@ import com.example.finalproject.model.HabitDatabaseHelper;
 import com.example.finalproject.model.ListviewHomeTest;
 import com.example.finalproject.model.MyBroadcastReceiver;
 import com.example.finalproject.ui.LisviewHomeTestAdapter;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -44,8 +48,10 @@ public class Home_Activity extends AppCompatActivity {
     ListView listHome;
     ArrayList<ListviewHomeTest> arrayListHome;
     LisviewHomeTestAdapter adapterHome;
-    FloatingActionButton btnNew; 
+    View btnNew; 
     ImageButton ibGraph, ibClock, ibSettings;
+
+    private static final int NOTIFICATION_PERMISSION_CODE = 123;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,17 +84,38 @@ public class Home_Activity extends AppCompatActivity {
         listHome.setAdapter(adapterHome);
 
         btnNew = findViewById(R.id.btnNew); 
-        btnNew.setOnClickListener(v -> {
-            Intent intent = new Intent(Home_Activity.this, Create_habit.class);
-            Bundle bundle = new Bundle();
-            bundle.putSerializable("user_account", acc);
-            intent.putExtra("idTaiKhoan", idUser);
-            intent.putExtras(bundle);
-            startActivity(intent);
-        });
+        if (btnNew != null) {
+            btnNew.setOnClickListener(v -> {
+                Intent intent = new Intent(Home_Activity.this, Create_habit.class);
+                intent.putExtra("idTaiKhoan", idUser);
+                intent.putExtra("user_account", acc);
+                startActivity(intent);
+            });
+        }
 
         setupBottomNav();
-        notification();
+        checkAndRequestNotificationPermission();
+        createNotificationChannel();
+    }
+
+    private void checkAndRequestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.POST_NOTIFICATIONS}, NOTIFICATION_PERMISSION_CODE);
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == NOTIFICATION_PERMISSION_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "Đã bật thông báo nhắc nhở", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "Vui lòng cấp quyền thông báo để nhận nhắc nhở", Toast.LENGTH_LONG).show();
+            }
+        }
     }
 
     @Override
@@ -116,10 +143,8 @@ public class Home_Activity extends AppCompatActivity {
 
             if (target != null) {
                 Intent i = new Intent(Home_Activity.this, target);
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("user_account", acc);
                 i.putExtra("idTaiKhoan", idUser);
-                i.putExtras(bundle);
+                i.putExtra("user_account", acc);
                 startActivity(i);
             }
         };
@@ -135,35 +160,71 @@ public class Home_Activity extends AppCompatActivity {
         List<Habit> habits = databaseHelper.getHabitsByUser(idUser);
         for (Habit habit : habits) {
             String habitId = habit.getHabitId();
-            double target = calculateTarget(habit.getMucTieu(), habit.getKhoangThoiGian());
-            double doing = getHistoryData(databaseHelper.getHabitActions(idUser, habitId));
-            
+            double target = habit.getMucTieu(); 
+            double doing = getProgressByPeriod(habitId, habit.getKhoangThoiGian());
             double progress = (target > 0) ? (doing * 100.0 / target) : 0;
-            String doneText = String.format(Locale.getDefault(), "%.1f/%.1f %s", doing, target, habit.getDonVi());
+            
+            String unitVn = habit.getDonVi();
+            if ("hours".equalsIgnoreCase(unitVn)) unitVn = "Giờ";
+            else if ("pages".equalsIgnoreCase(unitVn)) unitVn = "Trang";
+            else if ("km".equalsIgnoreCase(unitVn)) unitVn = "km";
+            
+            String doneText = String.format(Locale.getDefault(), "%.1f/%.1f %s", doing, target, unitVn);
+
+            String thoiDiemVn = habit.getThoiDiem();
+            if ("Morning".equalsIgnoreCase(thoiDiemVn)) thoiDiemVn = "Sáng";
+            else if ("Afternoon".equalsIgnoreCase(thoiDiemVn)) thoiDiemVn = "Chiều";
+            else if ("Evening".equalsIgnoreCase(thoiDiemVn)) thoiDiemVn = "Tối";
+            else if ("Anytime".equalsIgnoreCase(thoiDiemVn)) thoiDiemVn = "Mọi lúc";
+
+            // SỬA ĐỔI: Tự động đánh dấu hoàn thành nếu đạt mục tiêu
+            String status = habit.getTrangThai();
+            if (doing >= target && target > 0) {
+                status = "Đã hoàn thành";
+            }
 
             ListviewHomeTest item = new ListviewHomeTest(
-                habitId, habit.getTen(), habit.getThoiDiem(), 
+                habitId, habit.getTen(), thoiDiemVn, 
                 habit.getThoiGianNhacNho(), doneText, (int) Math.min(100, progress), 
-                habit.getDonViTang(), target, habit.getTrangThai(), doing
+                habit.getDonViTang(), target, status, doing
             );
             arrayListHome.add(item);
         }
         adapterHome.notifyDataSetChanged();
     }
 
-    public double calculateTarget(double target, String period) {
-        if (period == null) return target;
-        double result = target;
-        if (period.equalsIgnoreCase("Week")) result = target / 7.0;
-        else if (period.equalsIgnoreCase("Month")) result = target / 30.0;
-        return new BigDecimal(result).setScale(1, RoundingMode.HALF_UP).doubleValue();
+    private double getProgressByPeriod(String habitId, String period) {
+        if (period == null) period = "Ngày";
+        if (period.equalsIgnoreCase("Day") || period.equalsIgnoreCase("Ngày")) {
+            return getHistoryData(databaseHelper.getHabitActions(idUser, habitId), 0);
+        } else if (period.equalsIgnoreCase("Week") || period.equalsIgnoreCase("Tuần")) {
+            return getHistoryData(databaseHelper.getHabitActions(idUser, habitId), 7);
+        } else if (period.equalsIgnoreCase("Month") || period.equalsIgnoreCase("Tháng")) {
+            return getHistoryData(databaseHelper.getHabitActions(idUser, habitId), 30);
+        }
+        return getHistoryData(databaseHelper.getHabitActions(idUser, habitId), 0);
     }
 
-    public double getHistoryData(List<HabitAction> actions) {
+    public double getHistoryData(List<HabitAction> actions, int daysBack) {
         double result = 0;
-        for (HabitAction action : actions) {
-            if (action.getActionTime() != null && action.getActionTime().startsWith(selectedDate)) {
-                result += action.getValue();
+        if (daysBack <= 0) {
+            for (HabitAction action : actions) {
+                if (action.getActionTime() != null && action.getActionTime().startsWith(selectedDate)) {
+                    result += action.getValue();
+                }
+            }
+        } else {
+            Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.DATE, -daysBack);
+            Date startDate = cal.getTime();
+            SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault());
+            for (HabitAction action : actions) {
+                try {
+                    Date actionDate = sdf.parse(action.getActionTime());
+                    if (actionDate != null && actionDate.after(startDate)) {
+                        result += action.getValue();
+                    }
+                } catch (Exception ignored) {}
             }
         }
         return result;
@@ -171,30 +232,21 @@ public class Home_Activity extends AppCompatActivity {
 
     public void showHabitOptions(ListviewHomeTest item) {
         if (item == null) return;
-        
-        if (idUser == null && acc != null && acc.getUsername() != null) {
-            idUser = databaseHelper.getAccountIdByUsernameAndPassword(acc.getUsername(), acc.getPassword());
-        }
-
-        String[] options = {"Tuỳ chỉnh", "Chỉnh sửa", "Xoá"};
+        String[] options = {"Xem tiến độ", "Chỉnh sửa", "Xoá thói quen"};
         new AlertDialog.Builder(this)
                 .setTitle(item.getNameHabit())
                 .setItems(options, (dialog, which) -> {
                     if (which == 0) {
                         Intent intent = new Intent(Home_Activity.this, ProgressActivity.class);
-                        Bundle bundle = new Bundle();
-                        bundle.putSerializable("user_account", acc);
-                        intent.putExtras(bundle);
                         intent.putExtra("idThoiQuen", item.getHabitId());
                         intent.putExtra("idTaiKhoan", idUser);
+                        intent.putExtra("user_account", acc);
                         startActivity(intent);
                     } else if (which == 1) {
                         Intent intent = new Intent(Home_Activity.this, Edit_habit.class);
-                        Bundle bundle = new Bundle();
-                        bundle.putSerializable("user_account", acc);
-                        intent.putExtras(bundle);
                         intent.putExtra("idThoiQuen", item.getHabitId());
                         intent.putExtra("idTaiKhoan", idUser);
+                        intent.putExtra("user_account", acc);
                         startActivity(intent);
                     } else if (which == 2) {
                         new AlertDialog.Builder(this)
@@ -235,14 +287,22 @@ public class Home_Activity extends AppCompatActivity {
 
         Intent i = new Intent(this, MyBroadcastReceiver.class);
         i.putExtra("message", message);
-        int requestCode = (int) System.currentTimeMillis(); 
+        int requestCode = message.hashCode() + (int)cal_alarm.getTimeInMillis(); 
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, requestCode, i, PendingIntent.FLAG_IMMUTABLE);
-        if (alarmManager != null) alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, cal_alarm.getTimeInMillis(), pendingIntent);
+        
+        if (alarmManager != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, cal_alarm.getTimeInMillis(), pendingIntent);
+            } else {
+                alarmManager.setExact(AlarmManager.RTC_WAKEUP, cal_alarm.getTimeInMillis(), pendingIntent);
+            }
+        }
     }
 
-    private void notification() {
+    private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel("Notify", "Habit Reminders", NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationChannel channel = new NotificationChannel("Notify", "Habit Reminders", NotificationManager.IMPORTANCE_HIGH);
+            channel.setDescription("Channel for Habit Tracker Reminders");
             NotificationManager manager = getSystemService(NotificationManager.class);
             if (manager != null) manager.createNotificationChannel(channel);
         }

@@ -28,14 +28,13 @@
                     android:layout_height="48dp"
                     android:layout_marginStart="8dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
-                    android:src="@drawable/set_back"
+                    android:src="@drawable/forgot_back"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:tint="#187BCE" />
 
                 <TextView
-                    android:id="@+id/textView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Chỉnh sửa thói quen"
@@ -62,7 +61,7 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Section 1: Basic Info -->
+            <!-- Thông tin cơ bản -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -80,12 +79,7 @@
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Tên thói quen"
-                        app:boxCornerRadiusTopEnd="12dp"
-                        app:boxCornerRadiusTopStart="12dp"
-                        app:boxCornerRadiusBottomEnd="12dp"
-                        app:boxCornerRadiusBottomStart="12dp">
-
+                        android:hint="Tên thói quen">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/editName"
                             android:layout_width="match_parent"
@@ -98,24 +92,17 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
-                        android:hint="Mô tả"
-                        app:boxCornerRadiusTopEnd="12dp"
-                        app:boxCornerRadiusTopStart="12dp"
-                        app:boxCornerRadiusBottomEnd="12dp"
-                        app:boxCornerRadiusBottomStart="12dp">
-
+                        android:hint="Mô tả">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/editDescription"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="top"
-                            android:inputType="textMultiLine"
-                            android:lines="3" />
+                            android:lines="2" />
                     </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Section 2: Time Settings -->
+            <!-- Thời điểm & Nhắc nhở -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -132,7 +119,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Thời gian ưa thích"
+                        android:text="Thời điểm"
                         android:textColor="#212529"
                         android:textStyle="bold" />
 
@@ -150,7 +137,7 @@
                             android:layout_weight="1"
                             android:layout_marginEnd="4dp"
                             android:text="Sáng"
-                            android:textSize="10sp"
+                            android:padding="0dp"
                             app:cornerRadius="8dp" />
 
                         <com.google.android.material.button.MaterialButton
@@ -161,7 +148,7 @@
                             android:layout_weight="1"
                             android:layout_marginEnd="4dp"
                             android:text="Chiều"
-                            android:textSize="10sp"
+                            android:padding="0dp"
                             app:cornerRadius="8dp" />
 
                         <com.google.android.material.button.MaterialButton
@@ -172,7 +159,7 @@
                             android:layout_weight="1"
                             android:layout_marginEnd="4dp"
                             android:text="Tối"
-                            android:textSize="10sp"
+                            android:padding="0dp"
                             app:cornerRadius="8dp" />
 
                         <com.google.android.material.button.MaterialButton
@@ -182,7 +169,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="Any"
-                            android:textSize="10sp"
+                            android:padding="0dp"
                             app:cornerRadius="8dp" />
                     </LinearLayout>
 
@@ -190,60 +177,207 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp">
-
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerVertical="true"
                             android:text="Nhắc nhở"
-                            android:textColor="#212529"
                             android:textStyle="bold" />
-
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btntime"
-                            style="@style/Widget.Material3.Button.OutlinedButton"
+                            style="@style/Widget.Material3.Button.TextButton"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentEnd="true"
                             android:text="Hẹn giờ"
-                            app:cornerRadius="8dp"
                             app:icon="@drawable/home_clock" />
                     </RelativeLayout>
 
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    <EditText
+                        android:id="@+id/editReminderMessage"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:hint="Nội dung nhắc nhở"
-                        app:boxCornerRadiusTopEnd="12dp"
-                        app:boxCornerRadiusTopStart="12dp"
-                        app:boxCornerRadiusBottomEnd="12dp"
-                        app:boxCornerRadiusBottomStart="12dp">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/editReminderMessage"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:inputType="text" />
-                    </com.google.android.material.textfield.TextInputLayout>
+                        android:layout_marginTop="8dp"
+                        android:hint="Nội dung lời nhắc" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Section 3: Goal Settings -->
+            <!-- Mục tiêu -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="32dp"
+                android:layout_marginBottom="24dp"
                 app:cardCornerRadius="16dp"
-                app:cardElevation="2dp"/>
+                app:cardElevation="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Mục tiêu"
+                        android:textColor="#212529"
+                        android:textStyle="bold" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:hint="Giá trị">
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/editNumber"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="numberDecimal" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnDonVi"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="56dp"
+                            android:layout_marginStart="8dp"
+                            android:text="km"
+                            android:backgroundTint="#F3E5F5"
+                            android:textColor="#212529"
+                            app:cornerRadius="12dp" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnDay"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="48dp"
+                            android:layout_height="56dp"
+                            android:layout_marginStart="8dp"
+                            android:text="D"
+                            android:padding="0dp"
+                            android:backgroundTint="#F3E5F5"
+                            android:textColor="#212529"
+                            app:cornerRadius="8dp" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnWeek"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="48dp"
+                            android:layout_height="56dp"
+                            android:layout_marginStart="4dp"
+                            android:text="W"
+                            android:padding="0dp"
+                            android:backgroundTint="#F3E5F5"
+                            android:textColor="#212529"
+                            app:cornerRadius="8dp" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnMonth"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="48dp"
+                            android:layout_height="56dp"
+                            android:layout_marginStart="4dp"
+                            android:text="M"
+                            android:padding="0dp"
+                            android:backgroundTint="#F3E5F5"
+                            android:textColor="#212529"
+                            app:cornerRadius="8dp" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="Đơn vị mỗi hành động"
+                        android:textColor="#6c757d"
+                        android:textSize="13sp" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+                        <Button
+                            android:id="@+id/btnDecreaseInc"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:text="-"
+                            style="@style/Widget.Material3.Button.IconButton" />
+                        <EditText
+                            android:id="@+id/editIncrease"
+                            android:layout_width="80dp"
+                            android:layout_height="wrap_content"
+                            android:background="@android:color/transparent"
+                            android:text="0.1"
+                            android:gravity="center"
+                            android:textColor="#187BCE"
+                            android:textSize="22sp"
+                            android:textStyle="bold"
+                            android:inputType="numberDecimal" />
+                        <Button
+                            android:id="@+id/btnIncreaseInc"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:text="+"
+                            style="@style/Widget.Material3.Button.IconButton" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="Thời gian thực hiện"
+                        android:textColor="#212529"
+                        android:textStyle="bold" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnBatDau"
+                            style="@style/Widget.Material3.Button.OutlinedButton"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Ngày bắt đầu"
+                            android:textColor="#187BCE"
+                            app:cornerRadius="12dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="8dp"
+                            android:text="→" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnKetThuc"
+                            style="@style/Widget.Material3.Button.OutlinedButton"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Ngày kết thúc"
+                            android:textColor="#187BCE"
+                            app:cornerRadius="12dp" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnComplete"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:text="Lưu thay đổi"
-                android:textAllCaps="false"
                 android:textSize="18sp"
                 app:backgroundTint="#187BCE"
                 app:cornerRadius="16dp" />

@@ -17,7 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:navigationIcon="@drawable/set_back"
-            app:title="Edit Profile"
+            app:title="Chỉnh sửa thông tin"
             app:titleCentered="true"
             app:titleTextColor="#187BCE"
             app:titleTextAppearance="@style/TextAppearance.Material3.TitleLarge" />

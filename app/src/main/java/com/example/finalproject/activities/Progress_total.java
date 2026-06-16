@@ -13,10 +13,12 @@ import com.example.finalproject.model.HabitAction;
 import com.example.finalproject.model.HabitDatabaseHelper;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
-import java.util.Arrays;
+
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class Progress_total extends AppCompatActivity {
@@ -26,10 +28,9 @@ public class Progress_total extends AppCompatActivity {
     private Account acc = new Account();
     private String idUser;
     private HabitDatabaseHelper databaseHelper;
-    private int[] perfectArr = new int[32];
     private MaterialCalendarView calendar;
     private Set<CalendarDay> habitDays = new HashSet<>();
-    private int numHabit = 0;
+    private int numActiveHabits = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +54,6 @@ public class Progress_total extends AppCompatActivity {
         
         if (calendar != null) {
             calendar.setSelectionMode(MaterialCalendarView.SELECTION_MODE_NONE);
-            // Quan trọng: Tắt cuộn nội bộ của lịch để thanh cuộn chính (NestedScrollView) hoạt động
             calendar.setNestedScrollingEnabled(false);
         }
     }
@@ -87,79 +87,81 @@ public class Progress_total extends AppCompatActivity {
     }
 
     private void updateAllStatistics() {
-        numHabit = 0;
-        int habitDoneCount = 0;
-        Arrays.fill(perfectArr, 0);
+        numActiveHabits = 0;
+        int habitDoneTodayCount = 0;
         habitDays.clear();
 
         List<Habit> habits = databaseHelper.getHabitsByUser(idUser);
-        
-        // KIỂM TRA NẾU USER KHÔNG CÓ HABIT (Chống Crash)
         if (habits == null || habits.isEmpty()) {
             resetStats();
             return;
         }
 
-        for (Habit habit : habits) {
-            if ("Đã hoàn thành".equals(habit.getTrangThai())) {
-                habitDoneCount++;
-            } else if ("Đang thực hiện".equals(habit.getTrangThai())) {
-                numHabit++;
-                processHabitContribution(idUser, habit.getHabitId());
-            }
-        }
-
-        txtHabitDone.setText(String.valueOf(habitDoneCount));
-
-        // Chỉ tính toán nếu có ít nhất 1 thói quen đang thực hiện
-        if (numHabit > 0) {
-            calculateStats();
-        } else {
-            resetStats();
-        }
-        
-        updateCalendarUI();
-    }
-
-    private void processHabitContribution(String userId, String habitId) {
-        List<HabitAction> actions = databaseHelper.getHabitActions(userId, habitId);
-        if (actions == null) return;
-        
         Calendar now = Calendar.getInstance();
-        int month = now.get(Calendar.MONTH);
-        int year = now.get(Calendar.YEAR);
+        int currentDay = now.get(Calendar.DAY_OF_MONTH);
+        int currentMonth = now.get(Calendar.MONTH);
+        int currentYear = now.get(Calendar.YEAR);
 
-        for (HabitAction action : actions) {
-            Calendar actionTime = databaseHelper.parseActionTime(action.getActionTime());
-            if (actionTime != null) {
-                // Chỉ tính các hành động trong tháng hiện tại
-                if (actionTime.get(Calendar.MONTH) == month && actionTime.get(Calendar.YEAR) == year) {
+        Map<Integer, Set<String>> dailyCompletions = new HashMap<>();
+
+        for (Habit habit : habits) {
+            numActiveHabits++;
+            String hid = habit.getHabitId();
+            double target = habit.getMucTieu();
+            
+            List<HabitAction> actions = databaseHelper.getHabitActions(idUser, hid);
+            Map<Integer, Double> habitDailySums = new HashMap<>();
+            
+            for (HabitAction action : actions) {
+                Calendar actionTime = databaseHelper.parseActionTime(action.getActionTime());
+                if (actionTime != null && 
+                    actionTime.get(Calendar.MONTH) == currentMonth && 
+                    actionTime.get(Calendar.YEAR) == currentYear) {
+                    
                     int day = actionTime.get(Calendar.DAY_OF_MONTH);
-                    if (day < 32) perfectArr[day]++;
+                    habitDailySums.put(day, habitDailySums.getOrDefault(day, 0.0) + action.getValue());
+                }
+            }
+
+            for (Map.Entry<Integer, Double> entry : habitDailySums.entrySet()) {
+                if (entry.getValue() >= target) {
+                    int day = entry.getKey();
+                    if (!dailyCompletions.containsKey(day)) {
+                        dailyCompletions.put(day, new HashSet<>());
+                    }
+                    dailyCompletions.get(day).add(hid);
+                    
+                    if (day == currentDay) {
+                        habitDoneTodayCount++;
+                    }
                 }
             }
         }
-    }
 
-    private void calculateStats() {
+        txtHabitDone.setText(String.valueOf(habitDoneTodayCount));
+
         int perfectDaysCount = 0;
         int maxStreak = 0;
         int currentStreak = 0;
-        Calendar now = Calendar.getInstance();
-        int maxDay = now.getActualMaximum(Calendar.DAY_OF_MONTH);
+        int maxDayInMonth = now.getActualMaximum(Calendar.DAY_OF_MONTH);
 
-        for (int i = 1; i <= maxDay; i++) {
-            if (numHabit > 0 && perfectArr[i] >= numHabit) {
+        for (int i = 1; i <= maxDayInMonth; i++) {
+            Set<String> completedOnDay = dailyCompletions.get(i);
+            
+            if (numActiveHabits > 0 && completedOnDay != null && completedOnDay.size() >= numActiveHabits) {
                 perfectDaysCount++;
                 currentStreak++;
                 maxStreak = Math.max(maxStreak, currentStreak);
-                habitDays.add(CalendarDay.from(now.get(Calendar.YEAR), now.get(Calendar.MONTH) + 1, i));
+                habitDays.add(CalendarDay.from(currentYear, currentMonth + 1, i));
             } else {
                 currentStreak = 0;
             }
         }
+
         txtPerfectDay.setText(String.valueOf(perfectDaysCount));
         txtBestStreaks.setText(String.valueOf(maxStreak));
+        
+        updateCalendarUI();
     }
 
     private void updateCalendarUI() {

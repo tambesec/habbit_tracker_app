@@ -15,6 +15,8 @@ import com.example.finalproject.model.Account;
 import com.example.finalproject.model.HabitDatabaseHelper;
 import com.google.android.material.button.MaterialButton;
 
+import java.util.List;
+
 public class SignUpActivity extends AppCompatActivity {
     HabitDatabaseHelper databaseHelper;
     TextView tvWelcomeTitle, btnLogin_SignUp;
@@ -77,9 +79,17 @@ public class SignUpActivity extends AppCompatActivity {
             return;
         }
 
+        List<Account> allAccounts = databaseHelper.getAllAccounts();
+
         // Kiểm tra username trùng lặp
-        if (databaseHelper.getAllAccounts().stream().anyMatch(acc -> username.equals(acc.getUsername()))) {
+        if (allAccounts.stream().anyMatch(acc -> username.equals(acc.getUsername()))) {
             Toast.makeText(this, "Tên người dùng đã tồn tại", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Kiểm tra email trùng lặp
+        if (allAccounts.stream().anyMatch(acc -> email.equalsIgnoreCase(acc.getGmail()))) {
+            Toast.makeText(this, "Email đã được sử dụng", Toast.LENGTH_SHORT).show();
             return;
         }
 

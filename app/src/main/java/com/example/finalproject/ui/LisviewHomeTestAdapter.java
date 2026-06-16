@@ -56,7 +56,7 @@ public class LisviewHomeTestAdapter extends ArrayAdapter<ListviewHomeTest> {
         doneProgress.setText(item.getDoneProgress());
         progressBar.setProgress(item.getDone());
 
-        // Sửa lỗi: Gán sự kiện nhấn vào toàn bộ vùng của thẻ để hiện hộp thoại tùy chỉnh
+        // Xử lý sự kiện nhấn vào Habit để hiện Menu (Tuỳ chỉnh/Sửa/Xoá)
         if (itemContainer != null) {
             itemContainer.setOnClickListener(v -> {
                 if (context instanceof Home_Activity) {
@@ -67,19 +67,17 @@ public class LisviewHomeTestAdapter extends ArrayAdapter<ListviewHomeTest> {
 
         if (ibPlus != null) {
             ibPlus.setOnClickListener(v -> {
-                if ("Đã hoàn thành".equals(item.getStatus())) {
-                    Toast.makeText(context, "Thói quen đã hoàn thành", Toast.LENGTH_SHORT).show();
-                } else {
-                    updateProgress(item, item.getDonViTang());
+                // SỬA ĐỔI: Cho phép cộng dồn kể cả khi đã xong, nhưng hiển thị thông báo khích lệ
+                updateProgress(item, item.getDonViTang());
+                if (item.getDoing() >= item.getTarget()) {
+                    Toast.makeText(context, "Tuyệt vời! Bạn đã hoàn thành mục tiêu", Toast.LENGTH_SHORT).show();
                 }
             });
         }
 
         if (ibMinus != null) {
             ibMinus.setOnClickListener(v -> {
-                if ("Đã hoàn thành".equals(item.getStatus())) {
-                    Toast.makeText(context, "Thói quen đã hoàn thành", Toast.LENGTH_SHORT).show();
-                } else if (item.getDoing() <= 0) {
+                if (item.getDoing() <= 0) {
                     Toast.makeText(context, "Tiến độ không thể âm", Toast.LENGTH_SHORT).show();
                 } else {
                     updateProgress(item, -item.getDonViTang());
@@ -97,6 +95,13 @@ public class LisviewHomeTestAdapter extends ArrayAdapter<ListviewHomeTest> {
         double newDoing = Math.max(0, item.getDoing() + delta);
         item.setDoing(newDoing);
         
+        // Cập nhật trạng thái ngay lập tức khi đạt 100%
+        if (newDoing >= item.getTarget() && item.getTarget() > 0) {
+            item.setStatus("Đã hoàn thành");
+        } else {
+            item.setStatus("Đang thực hiện");
+        }
+        
         String unit = "";
         try {
             String[] parts = item.getDoneProgress().split(" ");
@@ -104,7 +109,7 @@ public class LisviewHomeTestAdapter extends ArrayAdapter<ListviewHomeTest> {
         } catch (Exception e) { unit = ""; }
         
         item.setDoneProgress(String.format(Locale.getDefault(), "%.1f/%.1f %s", newDoing, item.getTarget(), unit));
-        item.setDone((int) Math.min(100, Math.ceil(newDoing * 100.0 / item.getTarget())));
+        item.setDone((int) Math.min(100, (newDoing * 100.0 / item.getTarget())));
         notifyDataSetChanged();
     }
 }

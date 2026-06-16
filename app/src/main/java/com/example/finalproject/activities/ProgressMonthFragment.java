@@ -79,6 +79,17 @@ public class ProgressMonthFragment extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        String idHabit = getArguments().getString("idHabit");
+        String idTaiKhoan = getArguments().getString("idTaiKhoan");
+        if (idHabit != null && idTaiKhoan != null) {
+            highlightDays();
+        }
+    }
+
     public void getConnection(String userId,String habbitId){
         databaseHelper = HabitDatabaseHelper.getInstance(requireContext());
     }
@@ -89,8 +100,7 @@ public class ProgressMonthFragment extends Fragment {
         // Lấy dữ liệu
         String idHabit = getArguments().getString("idHabit");
         String idTaiKhoan = getArguments().getString("idTaiKhoan");
-        Log.d("idHabit m", idHabit);
-        Log.d("idTaiKhoan m", idTaiKhoan);
+
         calendar = view.findViewById(R.id.calendarView);
         setupCalendar();
         highlightDays();
@@ -100,13 +110,14 @@ public class ProgressMonthFragment extends Fragment {
 
     private void setupCalendar() {
         calendar.setSelectionMode(MaterialCalendarView.SELECTION_MODE_NONE);
-        for (CalendarDay day : habitDays) {
-            calendar.setDateSelected(day, true);
-        }
+        calendar.removeDecorators(); // Clear old decorators if any
     }
+
     public void highlightDays() {
         String idHabit = getArguments().getString("idHabit");
         String idTaiKhoan = getArguments().getString("idTaiKhoan");
+        if (idHabit == null || idTaiKhoan == null) return;
+        
         getConnection(idTaiKhoan,idHabit);
         habitDays.clear();
         databaseHelper.getHabitActions(idTaiKhoan, idHabit).forEach(action -> {
@@ -115,6 +126,9 @@ public class ProgressMonthFragment extends Fragment {
                 habitDays.add(CalendarDay.from(calendarValue.get(java.util.Calendar.YEAR), calendarValue.get(java.util.Calendar.MONTH) + 1, calendarValue.get(java.util.Calendar.DAY_OF_MONTH)));
             }
         });
-        setupCalendar();
+
+        for (CalendarDay day : habitDays) {
+            calendar.setDateSelected(day, true);
+        }
     }
 }

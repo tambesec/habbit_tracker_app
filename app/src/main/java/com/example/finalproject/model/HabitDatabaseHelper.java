@@ -17,15 +17,17 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class HabitDatabaseHelper extends SQLiteOpenHelper {
     private static final String TAG = "HabitDatabaseHelper";
-    private static final String DB_NAME = "habit_tracker_final_v1000.db";
-    private static final int DB_VERSION = 1;
+    private static final String DB_NAME = "habit_tracker_final_v1001.db";
+    private static final int DB_VERSION = 2; 
     private static final String PREFS_NAME = "habit_tracker_prefs";
-    private static final String PREF_SEEDED = "seeded_v1000";
+    private static final String PREF_SEEDED = "seeded_v1001";
 
     private static HabitDatabaseHelper instance;
     private final Context appContext;
@@ -44,7 +46,6 @@ public class HabitDatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        Log.d(TAG, "onCreate: Initializing database tables...");
         db.execSQL("CREATE TABLE IF NOT EXISTS accounts (id TEXT PRIMARY KEY, avatar TEXT, sex TEXT, gmail TEXT, name TEXT, password TEXT, born TEXT, phone TEXT, username TEXT UNIQUE NOT NULL)");
         db.execSQL("CREATE TABLE IF NOT EXISTS habits (id TEXT PRIMARY KEY, user_id TEXT NOT NULL, don_vi TEXT, don_vi_tang REAL, khoang_thoi_gian TEXT, loi_nhac_nho TEXT, mo_ta TEXT, muc_tieu REAL, ten TEXT, thoi_diem TEXT, thoi_gian_bat_dau TEXT, thoi_gian_ket_thuc TEXT, thoi_gian_nhac_nho TEXT, trang_thai TEXT, FOREIGN KEY(user_id) REFERENCES accounts(id) ON DELETE CASCADE)");
         db.execSQL("CREATE TABLE IF NOT EXISTS habit_actions (id INTEGER PRIMARY KEY AUTOINCREMENT, user_id TEXT NOT NULL, habit_id TEXT NOT NULL, action_time TEXT NOT NULL, value REAL NOT NULL, FOREIGN KEY(user_id) REFERENCES accounts(id) ON DELETE CASCADE, FOREIGN KEY(habit_id) REFERENCES habits(id) ON DELETE CASCADE)");
@@ -56,6 +57,7 @@ public class HabitDatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS habit_actions");
         db.execSQL("DROP TABLE IF EXISTS habits");
         db.execSQL("DROP TABLE IF EXISTS accounts");
+        appContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit().remove(PREF_SEEDED).apply();
         onCreate(db);
     }
 
@@ -72,18 +74,15 @@ public class HabitDatabaseHelper extends SQLiteOpenHelper {
             
             db.beginTransaction();
             try {
-                // Seed Accounts
                 JSONObject accountsObj = root.getJSONObject("Tai_Khoan");
                 JSONArray accKeys = accountsObj.names();
                 if (accKeys != null) {
                     for (int i = 0; i < accKeys.length(); i++) {
                         String id = accKeys.getString(i);
-                        JSONObject item = accountsObj.getJSONObject(id);
-                        db.insertWithOnConflict("accounts", null, toAccountValuesFromJson(id, item), SQLiteDatabase.CONFLICT_REPLACE);
+                        db.insertWithOnConflict("accounts", null, toAccountValuesFromJson(id, accountsObj.getJSONObject(id)), SQLiteDatabase.CONFLICT_REPLACE);
                     }
                 }
 
-                // Seed Data (Habits)
                 JSONObject dataObj = root.optJSONObject("Du_Lieu");
                 if (dataObj != null) {
                     JSONArray userIds = dataObj.names();
@@ -95,8 +94,7 @@ public class HabitDatabaseHelper extends SQLiteOpenHelper {
                             if (habitIds == null) continue;
                             for (int j = 0; j < habitIds.length(); j++) {
                                 String habitId = habitIds.getString(j);
-                                JSONObject h = userHabits.getJSONObject(habitId);
-                                db.insertWithOnConflict("habits", null, toHabitValuesFromJson(userId, habitId, h), SQLiteDatabase.CONFLICT_REPLACE);
+                                db.insertWithOnConflict("habits", null, toHabitValuesFromJson(userId, habitId, userHabits.getJSONObject(habitId)), SQLiteDatabase.CONFLICT_REPLACE);
                             }
                         }
                     }
@@ -108,12 +106,11 @@ public class HabitDatabaseHelper extends SQLiteOpenHelper {
     }
 
     // --- Account Methods ---
-    public List<Account> getAllAccounts() {
-        List<Account> list = new ArrayList<>();
-        try (Cursor c = getReadableDatabase().rawQuery("SELECT * FROM accounts", null)) {
-            while (c.moveToNext()) list.add(readAccount(c));
+    public Account getAccountByUsernameAndPassword(String u, String p) {
+        try (Cursor c = getReadableDatabase().rawQuery("SELECT * FROM accounts WHERE username=? AND password=?", new String[]{u, p})) {
+            if (c.moveToFirst()) return readAccount(c);
         } catch (Exception ignored) {}
-        return list;
+        return null;
     }
 
     public Account getAccountById(String id) {
@@ -123,11 +120,12 @@ public class HabitDatabaseHelper extends SQLiteOpenHelper {
         return null;
     }
 
-    public Account getAccountByUsernameAndPassword(String u, String p) {
-        try (Cursor c = getReadableDatabase().rawQuery("SELECT * FROM accounts WHERE username=? AND password=?", new String[]{u, p})) {
-            if (c.moveToFirst()) return readAccount(c);
+    public List<Account> getAllAccounts() {
+        List<Account> list = new ArrayList<>();
+        try (Cursor c = getReadableDatabase().rawQuery("SELECT * FROM accounts", null)) {
+            while (c.moveToNext()) list.add(readAccount(c));
         } catch (Exception ignored) {}
-        return null;
+        return list;
     }
 
     public String getAccountIdByUsernameAndPassword(String u, String p) {
@@ -145,19 +143,30 @@ public class HabitDatabaseHelper extends SQLiteOpenHelper {
     }
 
     public void insertAccount(Account a) {
+        String id = "TK" + System.currentTimeMillis();
         ContentValues v = new ContentValues();
-        v.put("id", "User" + System.currentTimeMillis());
-        v.put("username", a.getUsername()); v.put("password", a.getPassword());
-        v.put("name", a.getName()); v.put("gmail", a.getGmail());
-        v.put("avatar", a.getAvatar()); v.put("sex", a.getSex());
-        v.put("born", a.getBorn()); v.put("phone", a.getPhone());
+        v.put("id", id);
+        v.put("avatar", a.getAvatar());
+        v.put("sex", a.getSex());
+        v.put("gmail", a.getGmail());
+        v.put("name", a.getName());
+        v.put("password", a.getPassword());
+        v.put("born", a.getBorn());
+        v.put("phone", a.getPhone());
+        v.put("username", a.getUsername());
         getWritableDatabase().insert("accounts", null, v);
     }
 
     public boolean updateAccount(String id, Account a) {
         ContentValues v = new ContentValues();
-        v.put("avatar", a.getAvatar()); v.put("sex", a.getSex()); v.put("gmail", a.getGmail());
-        v.put("name", a.getName()); v.put("born", a.getBorn()); v.put("phone", a.getPhone());
+        v.put("avatar", a.getAvatar());
+        v.put("sex", a.getSex());
+        v.put("gmail", a.getGmail());
+        v.put("name", a.getName());
+        v.put("password", a.getPassword());
+        v.put("born", a.getBorn());
+        v.put("phone", a.getPhone());
+        v.put("username", a.getUsername());
         return getWritableDatabase().update("accounts", v, "id=?", new String[]{id}) > 0;
     }
 
@@ -187,14 +196,10 @@ public class HabitDatabaseHelper extends SQLiteOpenHelper {
         return getWritableDatabase().update("habits", toHabitValuesFromModel(uid, h, hid), "id=? AND user_id=?", new String[]{hid, uid}) > 0;
     }
 
-    public boolean updateHabitStatus(String uid, String hid, String status) {
-        ContentValues v = new ContentValues();
-        v.put("trang_thai", status);
-        return getWritableDatabase().update("habits", v, "id=? AND user_id=?", new String[]{hid, uid}) > 0;
-    }
-
     public boolean deleteHabit(String uid, String hid) {
-        return updateHabitStatus(uid, hid, "Đã xóa");
+        ContentValues v = new ContentValues();
+        v.put("trang_thai", "Đã xóa");
+        return getWritableDatabase().update("habits", v, "id=? AND user_id=?", new String[]{hid, uid}) > 0;
     }
 
     // --- Action & Progress Methods ---
@@ -215,7 +220,11 @@ public class HabitDatabaseHelper extends SQLiteOpenHelper {
 
     public double getTodayProgress(String uid, String hid) {
         String today = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
-        try (Cursor c = getReadableDatabase().rawQuery("SELECT SUM(value) FROM habit_actions WHERE user_id=? AND habit_id=? AND action_time LIKE ?", new String[]{uid, hid, today + "%"})) {
+        return getProgressByDate(uid, hid, today);
+    }
+
+    public double getProgressByDate(String uid, String hid, String date) {
+        try (Cursor c = getReadableDatabase().rawQuery("SELECT SUM(value) FROM habit_actions WHERE user_id=? AND habit_id=? AND action_time LIKE ?", new String[]{uid, hid, date + "%"})) {
             if (c.moveToFirst()) return c.getDouble(0);
         } catch (Exception ignored) {}
         return 0;
@@ -229,48 +238,68 @@ public class HabitDatabaseHelper extends SQLiteOpenHelper {
     }
 
     public int getTotalDaysWithProgress(String uid, String hid) {
-        try (Cursor c = getReadableDatabase().rawQuery("SELECT COUNT(DISTINCT SUBSTR(action_time, 1, 10)) FROM habit_actions WHERE user_id=? AND habit_id=?", new String[]{uid, hid})) {
-            if (c.moveToFirst()) return c.getInt(0);
-        } catch (Exception ignored) {}
-        return 0;
+        Habit h = getHabit(uid, hid);
+        if (h == null) return 0;
+        double target = h.getMucTieu();
+        Map<String, Double> dailySums = new HashMap<>();
+        List<HabitAction> actions = getHabitActions(uid, hid);
+        for (HabitAction action : actions) {
+            Calendar cal = parseActionTime(action.getActionTime());
+            if (cal != null) {
+                String dateKey = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(cal.getTime());
+                dailySums.put(dateKey, dailySums.getOrDefault(dateKey, 0.0) + action.getValue());
+            }
+        }
+        int count = 0;
+        for (Double sum : dailySums.values()) {
+            if (sum >= target) count++;
+        }
+        return count;
     }
 
     public int getDoneInCurrentMonth(String uid, String hid) {
-        String m = new SimpleDateFormat("MM-yyyy", Locale.getDefault()).format(new Date());
-        try (Cursor c = getReadableDatabase().rawQuery("SELECT COUNT(DISTINCT SUBSTR(action_time, 1, 10)) FROM habit_actions WHERE user_id=? AND habit_id=? AND action_time LIKE ?", new String[]{uid, hid, "%" + m + "%"})) {
-            if (c.moveToFirst()) return c.getInt(0);
-        } catch (Exception ignored) {}
-        return 0;
-    }
-
-    public double getCurrentMonthActionCount(String uid, String hid, int day) {
-        String m = new SimpleDateFormat("MM-yyyy", Locale.getDefault()).format(new Date());
-        String d = String.format(Locale.getDefault(), "%02d-%s", day, m);
-        try (Cursor c = getReadableDatabase().rawQuery("SELECT SUM(value) FROM habit_actions WHERE user_id=? AND habit_id=? AND action_time LIKE ?", new String[]{uid, hid, d + "%"})) {
-            if (c.moveToFirst()) return c.getDouble(0);
-        } catch (Exception ignored) {}
-        return 0;
-    }
-
-    // --- Utilities ---
-    public boolean isToday(String t) {
-        if (t == null) return false;
-        return t.startsWith(new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date()));
+        Habit h = getHabit(uid, hid);
+        if (h == null) return 0;
+        double target = h.getMucTieu();
+        Calendar now = Calendar.getInstance();
+        int month = now.get(Calendar.MONTH);
+        int year = now.get(Calendar.YEAR);
+        
+        Map<String, Double> dailySums = new HashMap<>();
+        List<HabitAction> actions = getHabitActions(uid, hid);
+        for (HabitAction action : actions) {
+            Calendar cal = parseActionTime(action.getActionTime());
+            if (cal != null && cal.get(Calendar.MONTH) == month && cal.get(Calendar.YEAR) == year) {
+                String dateKey = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(cal.getTime());
+                dailySums.put(dateKey, dailySums.getOrDefault(dateKey, 0.0) + action.getValue());
+            }
+        }
+        int count = 0;
+        for (Double sum : dailySums.values()) {
+            if (sum >= target) count++;
+        }
+        return count;
     }
 
     public boolean isInCurrentMonth(String t) {
         if (t == null) return false;
-        return t.contains(new SimpleDateFormat("MM-yyyy", Locale.getDefault()).format(new Date()));
+        Calendar cal = parseActionTime(t);
+        if (cal == null) return false;
+        Calendar now = Calendar.getInstance();
+        return cal.get(Calendar.MONTH) == now.get(Calendar.MONTH) && cal.get(Calendar.YEAR) == now.get(Calendar.YEAR);
     }
 
     public Calendar parseActionTime(String v) {
-        if (v == null || v.trim().isEmpty()) return null;
-        String n = normalizeAmPm(v.trim());
-        String[] pts = {"dd-MM-yyyy HH:mm:ss", "dd-MM-yyyy h:mm:ssa", "dd-MM-yyyy hh:mm:ssa"};
-        for (String p : pts) {
+        if (v == null) return null;
+        String[] formats = {"dd-MM-yyyy HH:mm:ss", "dd-MM-yyyy hh:mm:ss a", "dd-MM-yyyy hh:mm:ss"};
+        for (String format : formats) {
             try {
-                SimpleDateFormat sdf = new SimpleDateFormat(p, Locale.getDefault());
-                Date d = sdf.parse(n);
+                SimpleDateFormat sdf = new SimpleDateFormat(format, Locale.getDefault());
+                Date d = sdf.parse(v.replace("SA", "AM").replace("CH", "PM"));
+                if (d == null) {
+                    sdf = new SimpleDateFormat(format, Locale.US);
+                    d = sdf.parse(v);
+                }
                 if (d != null) { Calendar c = Calendar.getInstance(); c.setTime(d); return c; }
             } catch (Exception ignored) {}
         }
@@ -281,9 +310,8 @@ public class HabitDatabaseHelper extends SQLiteOpenHelper {
         Calendar c = Calendar.getInstance();
         if (v == null || v.isEmpty()) return c;
         try {
-            String n = normalizeAmPm(v.trim());
             SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a", Locale.US);
-            Date d = sdf.parse(n);
+            Date d = sdf.parse(v.replace("SA", "AM").replace("CH", "PM"));
             if (d != null) {
                 Calendar t = Calendar.getInstance(); t.setTime(d);
                 c.set(Calendar.HOUR_OF_DAY, t.get(Calendar.HOUR_OF_DAY));
@@ -293,11 +321,6 @@ public class HabitDatabaseHelper extends SQLiteOpenHelper {
         return c;
     }
 
-    public String normalizeAmPm(String v) {
-        return v.replace("SA", "AM").replace("CH", "PM").replace("sa", "AM").replace("ch", "PM");
-    }
-
-    // --- Mappers ---
     private Account readAccount(Cursor c) {
         Account a = new Account();
         a.setUsername(c.getString(c.getColumnIndexOrThrow("username")));
@@ -368,16 +391,6 @@ public class HabitDatabaseHelper extends SQLiteOpenHelper {
         v.put("mo_ta", h.getMoTa()); v.put("thoi_diem", h.getThoiDiem());
         v.put("thoi_gian_bat_dau", h.getThoiGianBatDau()); v.put("thoi_gian_ket_thuc", h.getThoiGianKetThuc());
         v.put("thoi_gian_nhac_nho", h.getThoiGianNhacNho()); v.put("trang_thai", h.getTrangThai());
-        return v;
-    }
-
-    private ContentValues toAccountValuesFromModel(String id, Account a) {
-        ContentValues v = new ContentValues();
-        v.put("id", id);
-        v.put("username", a.getUsername()); v.put("password", a.getPassword());
-        v.put("name", a.getName()); v.put("gmail", a.getGmail());
-        v.put("avatar", a.getAvatar()); v.put("sex", a.getSex());
-        v.put("born", a.getBorn()); v.put("phone", a.getPhone());
         return v;
     }
 }

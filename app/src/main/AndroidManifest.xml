@@ -46,8 +46,7 @@
             android:exported="false" />
         <activity
             android:name=".activities.Edit_habit"
-            android:exported="false">
-        </activity>
+            android:exported="false" />
         <activity
             android:name=".activities.Pomorodo"
             android:theme="@style/AppTheme"
