@@ -67,7 +67,7 @@ public class LisviewHomeTestAdapter extends ArrayAdapter<ListviewHomeTest> {
 
         if (ibPlus != null) {
             ibPlus.setOnClickListener(v -> {
-                // SỬA ĐỔI: Cho phép cộng dồn kể cả khi đã xong, nhưng hiển thị thông báo khích lệ
+                // Cho phép cộng dồn kể cả khi đã xong, nhưng hiển thị thông báo khích lệ
                 updateProgress(item, item.getDonViTang());
                 if (item.getDoing() >= item.getTarget()) {
                     Toast.makeText(context, "Tuyệt vời! Bạn đã hoàn thành mục tiêu", Toast.LENGTH_SHORT).show();

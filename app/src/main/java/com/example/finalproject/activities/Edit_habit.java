@@ -164,6 +164,7 @@ public class Edit_habit extends AppCompatActivity {
         Habit habit = databaseHelper.getHabit(idTaiKhoan, idThoiQuen);
         if (habit == null) habit = new Habit();
 
+        // Xử lý đơn vị tăng mà người dùng nhập vào
         double increase = 0.1;
         try {
             increase = Double.parseDouble(editIncrease.getText().toString());

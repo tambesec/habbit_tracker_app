@@ -65,7 +65,7 @@ public class Create_habit extends AppCompatActivity {
         initViews();
         setupListeners();
         
-        // Cập nhật giao diện mặc định ban đầu
+
         updatePeriodUI();
         updateTimeRangeUI();
     }
@@ -92,7 +92,7 @@ public class Create_habit extends AppCompatActivity {
         btnEvening = findViewById(R.id.btnEvening);
         btnAnytime = findViewById(R.id.btnAnytime);
         
-        // Cập nhật text nút "Any" trong XML thành "Mọi lúc" nếu cần, hoặc set ở đây
+
         btnAnytime.setText("Mọi lúc");
     }
 

@@ -59,6 +59,7 @@ public class Pomorodo extends AppCompatActivity {
         ibSetting = findViewById(R.id.ib_settings);
 
 
+        // Các lệnh cho phép người dùng chuyển hướng sang tab khác
         String idTaiKhoan = getIntent().getStringExtra("idTaiKhoan");
         getData();
         ibHome.setOnClickListener(new View.OnClickListener() {
@@ -107,6 +108,7 @@ public class Pomorodo extends AppCompatActivity {
         });
         onStart();
     }
+    // Cần biêt người dùng để khi chuyển hướng các trang khác hiển thị đúng dữ liệu của người dùng
     public void getData(){
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {

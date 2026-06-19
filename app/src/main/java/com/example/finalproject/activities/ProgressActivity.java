@@ -164,7 +164,7 @@ public class ProgressActivity extends AppCompatActivity {
                 tvHabitTime.setText(timeVn);
             }
             
-            // SỬA LỖI: Hiển thị đúng thời hạn thực hiện
+            // Hiển thị đúng thời hạn thực hiện
             if (tvHabitDuration != null) {
                 tvHabitDuration.setText(habit.getThoiGianBatDau() + " - " + habit.getThoiGianKetThuc());
             }

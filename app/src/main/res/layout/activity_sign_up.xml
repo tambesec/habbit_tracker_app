@@ -7,7 +7,6 @@
     android:background="#FFFFFF"
     tools:context=".activities.SignUpActivity">
 
-    <!-- Nền xanh nhạt trên cùng -->
     <View
         android:id="@+id/viewHeader"
         android:layout_width="match_parent"
@@ -15,7 +14,6 @@
         android:background="#E7F3FF"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Hình sóng biển: Ghim sát đỉnh màn hình -->
     <ImageView
         android:id="@+id/imageViewBackground"
         android:layout_width="match_parent"

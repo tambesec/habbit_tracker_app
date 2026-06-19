@@ -6,8 +6,6 @@
     android:layout_height="match_parent"
     android:background="#FFFFFF"
     tools:context=".activities.WelcomeActivity">
-
-    <!-- Nền xanh nhạt trên cùng: Cố định vị trí sát đỉnh tuyệt đối -->
     <View
         android:id="@+id/viewHeader"
         android:layout_width="match_parent"
@@ -15,7 +13,6 @@
         android:background="#E7F3FF"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Hình sóng biển: centerCrop và ghim sát đỉnh để không bị khoảng trắng -->
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="match_parent"

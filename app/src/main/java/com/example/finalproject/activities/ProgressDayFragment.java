@@ -73,7 +73,7 @@ public class ProgressDayFragment extends Fragment {
         if (habit == null) return;
 
         try {
-            // SỬA ĐỔI: Sử dụng mục tiêu gốc, không chia nhỏ
+            // Sử dụng mục tiêu gốc, không chia nhỏ
             double target = habit.getMucTieu();
             String donvi = habit.getDonVi();
             

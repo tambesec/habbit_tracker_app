@@ -16,7 +16,6 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <!-- Bottom Navigation Container -->
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout2"
@@ -24,7 +23,6 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <!-- Timer Circle Container -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/timerCard"
             android:layout_width="320dp"

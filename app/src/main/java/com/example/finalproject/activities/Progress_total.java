@@ -14,10 +14,13 @@ import com.example.finalproject.model.HabitDatabaseHelper;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -30,7 +33,6 @@ public class Progress_total extends AppCompatActivity {
     private HabitDatabaseHelper databaseHelper;
     private MaterialCalendarView calendar;
     private Set<CalendarDay> habitDays = new HashSet<>();
-    private int numActiveHabits = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,93 +65,76 @@ public class Progress_total extends AppCompatActivity {
             Bundle b = getIntent().getExtras();
             if (b != null) {
                 acc = (Account) b.getSerializable("user_account");
-                if (acc == null) acc = new Account();
                 idUser = getIntent().getStringExtra("idTaiKhoan");
             }
-
-            if (idUser == null) {
-                resetStats();
-                return;
-            }
-
-            updateAllStatistics();
+            if (idUser != null) updateAllStatistics();
         } catch (Exception e) {
             Log.e("ProgressTotal", "Error loading data", e);
-            resetStats();
         }
-    }
-
-    private void resetStats() {
-        if (txtHabitDone != null) txtHabitDone.setText("0");
-        if (txtPerfectDay != null) txtPerfectDay.setText("0");
-        if (txtBestStreaks != null) txtBestStreaks.setText("0");
-        if (calendar != null) calendar.removeDecorators();
     }
 
     private void updateAllStatistics() {
-        numActiveHabits = 0;
-        int habitDoneTodayCount = 0;
+        int habitsCompletedCount = 0;
         habitDays.clear();
-
+        
         List<Habit> habits = databaseHelper.getHabitsByUser(idUser);
-        if (habits == null || habits.isEmpty()) {
-            resetStats();
-            return;
-        }
+        if (habits == null) return;
 
         Calendar now = Calendar.getInstance();
-        int currentDay = now.get(Calendar.DAY_OF_MONTH);
         int currentMonth = now.get(Calendar.MONTH);
         int currentYear = now.get(Calendar.YEAR);
-
-        Map<Integer, Set<String>> dailyCompletions = new HashMap<>();
+        
+        // Lưu trữ tiến độ hoàn thành theo ngày để tính "Ngày hoàn hảo"
+        // Chỉ tính cho các thói quen "Hàng ngày"
+        Map<Integer, Set<String>> dailyDoneDailyHabits = new HashMap<>();
+        int totalDailyHabits = 0;
 
         for (Habit habit : habits) {
-            numActiveHabits++;
             String hid = habit.getHabitId();
+            String period = habit.getKhoangThoiGian();
             double target = habit.getMucTieu();
             
-            List<HabitAction> actions = databaseHelper.getHabitActions(idUser, hid);
-            Map<Integer, Double> habitDailySums = new HashMap<>();
-            
-            for (HabitAction action : actions) {
-                Calendar actionTime = databaseHelper.parseActionTime(action.getActionTime());
-                if (actionTime != null && 
-                    actionTime.get(Calendar.MONTH) == currentMonth && 
-                    actionTime.get(Calendar.YEAR) == currentYear) {
-                    
-                    int day = actionTime.get(Calendar.DAY_OF_MONTH);
-                    habitDailySums.put(day, habitDailySums.getOrDefault(day, 0.0) + action.getValue());
-                }
+            // 1. Tính "Thói quen hoàn thành" (Habit Done) dựa trên chu kỳ hiện tại
+            double currentProgress = getProgressForCurrentPeriod(habit);
+            if (currentProgress >= target && target > 0) {
+                habitsCompletedCount++;
             }
 
-            for (Map.Entry<Integer, Double> entry : habitDailySums.entrySet()) {
-                if (entry.getValue() >= target) {
-                    int day = entry.getKey();
-                    if (!dailyCompletions.containsKey(day)) {
-                        dailyCompletions.put(day, new HashSet<>());
+            // 2. Xử lý dữ liệu cho Lịch (Chỉ thói quen Hàng ngày mới tính vào Perfect Day hằng ngày)
+            if (isDaily(period)) {
+                totalDailyHabits++;
+                List<HabitAction> actions = databaseHelper.getHabitActions(idUser, hid);
+                Map<Integer, Double> daySums = new HashMap<>();
+                for (HabitAction action : actions) {
+                    Calendar cal = databaseHelper.parseActionTime(action.getActionTime());
+                    if (cal != null && cal.get(Calendar.MONTH) == currentMonth && cal.get(Calendar.YEAR) == currentYear) {
+                        int day = cal.get(Calendar.DAY_OF_MONTH);
+                        daySums.put(day, daySums.getOrDefault(day, 0.0) + action.getValue());
                     }
-                    dailyCompletions.get(day).add(hid);
-                    
-                    if (day == currentDay) {
-                        habitDoneTodayCount++;
+                }
+                for (Map.Entry<Integer, Double> entry : daySums.entrySet()) {
+                    if (entry.getValue() >= target) {
+                        int d = entry.getKey();
+                        if (!dailyDoneDailyHabits.containsKey(d)) dailyDoneDailyHabits.put(d, new HashSet<>());
+                        dailyDoneDailyHabits.get(d).add(hid);
                     }
                 }
             }
         }
 
-        txtHabitDone.setText(String.valueOf(habitDoneTodayCount));
+        txtHabitDone.setText(String.valueOf(habitsCompletedCount));
 
-        int perfectDaysCount = 0;
+        // 3. Tính "Ngày hoàn hảo" và "Streak"
+        int perfectDays = 0;
         int maxStreak = 0;
         int currentStreak = 0;
-        int maxDayInMonth = now.getActualMaximum(Calendar.DAY_OF_MONTH);
+        int daysInMonth = now.getActualMaximum(Calendar.DAY_OF_MONTH);
 
-        for (int i = 1; i <= maxDayInMonth; i++) {
-            Set<String> completedOnDay = dailyCompletions.get(i);
-            
-            if (numActiveHabits > 0 && completedOnDay != null && completedOnDay.size() >= numActiveHabits) {
-                perfectDaysCount++;
+        for (int i = 1; i <= daysInMonth; i++) {
+            Set<String> doneOnDay = dailyDoneDailyHabits.get(i);
+            // Một ngày hoàn hảo là ngày hoàn thành TẤT CẢ thói quen Hàng ngày
+            if (totalDailyHabits > 0 && doneOnDay != null && doneOnDay.size() >= totalDailyHabits) {
+                perfectDays++;
                 currentStreak++;
                 maxStreak = Math.max(maxStreak, currentStreak);
                 habitDays.add(CalendarDay.from(currentYear, currentMonth + 1, i));
@@ -158,10 +143,37 @@ public class Progress_total extends AppCompatActivity {
             }
         }
 
-        txtPerfectDay.setText(String.valueOf(perfectDaysCount));
+        txtPerfectDay.setText(String.valueOf(perfectDays));
         txtBestStreaks.setText(String.valueOf(maxStreak));
-        
         updateCalendarUI();
+    }
+
+    private double getProgressForCurrentPeriod(Habit habit) {
+        String period = habit.getKhoangThoiGian();
+        if (isDaily(period)) return databaseHelper.getTodayProgress(idUser, habit.getHabitId());
+        
+        int daysBack = 0;
+        if (period.equalsIgnoreCase("Week") || period.equalsIgnoreCase("Tuần")) daysBack = 7;
+        else if (period.equalsIgnoreCase("Month") || period.equalsIgnoreCase("Tháng")) daysBack = 30;
+        
+        return calculateRecentProgress(habit.getHabitId(), daysBack);
+    }
+
+    private double calculateRecentProgress(String hid, int days) {
+        List<HabitAction> actions = databaseHelper.getHabitActions(idUser, hid);
+        double sum = 0;
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, -days);
+        Date startDate = cal.getTime();
+        for (HabitAction action : actions) {
+            Calendar actTime = databaseHelper.parseActionTime(action.getActionTime());
+            if (actTime != null && actTime.getTime().after(startDate)) sum += action.getValue();
+        }
+        return sum;
+    }
+
+    private boolean isDaily(String p) {
+        return p == null || p.equalsIgnoreCase("Day") || p.equalsIgnoreCase("Ngày");
     }
 
     private void updateCalendarUI() {
@@ -173,17 +185,15 @@ public class Progress_total extends AppCompatActivity {
     }
 
     public void getEvents() {
-        if (ibHome != null) ibHome.setOnClickListener(v -> navigateTo(Home_Activity.class));
-        if (ibClock != null) ibClock.setOnClickListener(v -> navigateTo(Pomorodo.class));
-        if (ibSetting != null) ibSetting.setOnClickListener(v -> navigateTo(Setting.class));
+        ibHome.setOnClickListener(v -> navigateTo(Home_Activity.class));
+        ibClock.setOnClickListener(v -> navigateTo(Pomorodo.class));
+        ibSetting.setOnClickListener(v -> navigateTo(Setting.class));
     }
 
     private void navigateTo(Class<?> target) {
         Intent intent = new Intent(this, target);
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("user_account", acc);
         intent.putExtra("idTaiKhoan", idUser);
-        intent.putExtras(bundle);
+        intent.putExtra("user_account", acc);
         startActivity(intent);
     }
 }

@@ -31,8 +31,6 @@ import com.example.finalproject.model.ListviewHomeTest;
 import com.example.finalproject.model.MyBroadcastReceiver;
 import com.example.finalproject.ui.LisviewHomeTestAdapter;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -107,18 +105,6 @@ public class Home_Activity extends AppCompatActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == NOTIFICATION_PERMISSION_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "Đã bật thông báo nhắc nhở", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, "Vui lòng cấp quyền thông báo để nhận nhắc nhở", Toast.LENGTH_LONG).show();
-            }
-        }
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
         if (idUser == null && acc != null && acc.getUsername() != null) {
@@ -177,9 +163,9 @@ public class Home_Activity extends AppCompatActivity {
             else if ("Evening".equalsIgnoreCase(thoiDiemVn)) thoiDiemVn = "Tối";
             else if ("Anytime".equalsIgnoreCase(thoiDiemVn)) thoiDiemVn = "Mọi lúc";
 
-            // SỬA ĐỔI: Tự động đánh dấu hoàn thành nếu đạt mục tiêu
+            // SỬA ĐỔI: Sử dụng epsilon (target - 0.0001) để tránh lỗi dấu phẩy động
             String status = habit.getTrangThai();
-            if (doing >= target && target > 0) {
+            if (doing >= (target - 0.0001) && target > 0) {
                 status = "Đã hoàn thành";
             }
 
@@ -209,22 +195,28 @@ public class Home_Activity extends AppCompatActivity {
         double result = 0;
         if (daysBack <= 0) {
             for (HabitAction action : actions) {
-                if (action.getActionTime() != null && action.getActionTime().startsWith(selectedDate)) {
-                    result += action.getValue();
+                // SỬA ĐỔI: Sử dụng parser từ DatabaseHelper để đồng bộ định dạng
+                Calendar actionCal = databaseHelper.parseActionTime(action.getActionTime());
+                if (actionCal != null) {
+                    String actionDateStr = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(actionCal.getTime());
+                    if (actionDateStr.equals(selectedDate)) {
+                        result += action.getValue();
+                    }
                 }
             }
         } else {
-            Calendar cal = Calendar.getInstance();
-            cal.add(Calendar.DATE, -daysBack);
-            Date startDate = cal.getTime();
-            SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault());
+            Calendar limitCal = Calendar.getInstance();
+            limitCal.add(Calendar.DATE, -daysBack);
+            Date startDate = limitCal.getTime();
+            
             for (HabitAction action : actions) {
-                try {
-                    Date actionDate = sdf.parse(action.getActionTime());
-                    if (actionDate != null && actionDate.after(startDate)) {
+                // SỬA ĐỔI: Sử dụng parser từ DatabaseHelper thay vì SimpleDateFormat thủ công
+                Calendar actionCal = databaseHelper.parseActionTime(action.getActionTime());
+                if (actionCal != null) {
+                    if (actionCal.getTime().after(startDate)) {
                         result += action.getValue();
                     }
-                } catch (Exception ignored) {}
+                }
             }
         }
         return result;
